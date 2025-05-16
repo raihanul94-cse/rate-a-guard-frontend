@@ -1,0 +1,58 @@
+'use client';
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { User, Bell, Moon, Monitor, UserCog } from 'lucide-react';
+
+const sidebarNavItems = [
+    {
+        title: 'Profile',
+        href: '/settings',
+        icon: User,
+    },
+    {
+        title: 'Account',
+        href: '/settings/account',
+        icon: UserCog,
+    },
+    {
+        title: 'Appearance',
+        href: '/settings/appearance',
+        icon: Monitor,
+    },
+    {
+        title: 'Notifications',
+        href: '/settings/notifications',
+        icon: Bell,
+    },
+    {
+        title: 'Display',
+        href: '/settings/display',
+        icon: Moon,
+    },
+];
+
+export function SettingsSidebar() {
+    const pathname = usePathname();
+
+    return (
+        <aside className="-mx-4 lg:w-1/5">
+            <nav className="flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1">
+                {sidebarNavItems.map((item) => (
+                    <Button
+                        key={item.href}
+                        variant={pathname === item.href ? 'secondary' : 'ghost'}
+                        className="justify-start"
+                        asChild
+                    >
+                        <Link href={item.href}>
+                            <item.icon className="mr-2 h-4 w-4" />
+                            {item.title}
+                        </Link>
+                    </Button>
+                ))}
+            </nav>
+        </aside>
+    );
+}

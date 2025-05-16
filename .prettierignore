@@ -1,0 +1,11 @@
+# Ignore artifacts:
+build
+coverage
+.vscode-test/
+out/
+dist/
+public/
+test-fixtures/
+node_modules/**
+*.json
+*.css
