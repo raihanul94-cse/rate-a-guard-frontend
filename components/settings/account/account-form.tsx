@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -8,7 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { IAccountForm } from '@/types/user';
-import { useEffect } from 'react';
+import { genericClient } from '@/lib/generic-api-helper';
 
 const accountFormSchema = z.object({
     emailAddress: z.string().email({ message: 'Please enter a valid email address.' }),
@@ -22,6 +23,7 @@ interface IProps {
 
 export function AccountForm({ data }: IProps) {
     const { toast } = useToast();
+    const [isLoading, setIsLoading] = useState(false);
 
     const form = useForm<AccountFormValues>({
         resolver: zodResolver(accountFormSchema),
@@ -30,12 +32,36 @@ export function AccountForm({ data }: IProps) {
         },
     });
 
-    function onSubmit(data: AccountFormValues) {
-        toast({
-            title: 'Profile updated',
-            description: 'Your profile has been updated successfully.',
-        });
-        console.log(data);
+    async function onSubmit(values: AccountFormValues) {
+        setIsLoading(true);
+
+        try {
+            const response = await genericClient({
+                url: '/api/users/change-email-address',
+                method: 'put',
+                data: values
+            });
+
+            if (response.status === 'success') {
+                toast({
+                    title: 'Profile updated',
+                    description: 'Your profile has been updated successfully.',
+                });
+                data.emailAddress = response.data.emailAddress;
+                form.reset({
+                    emailAddress: response.data.emailAddress
+                });
+            }
+        } catch (error) {
+            console.log(error);
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Something went wrong. Please try again.',
+            });
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     useEffect(() => {
@@ -64,7 +90,7 @@ export function AccountForm({ data }: IProps) {
                 />
                 {
                     form.formState.isDirty &&
-                    <Button type="submit">Save Changes</Button>
+                    <Button type="submit" disabled={isLoading}>{isLoading ? 'Saving Changes...' : 'Save Changes'}</Button>
                 }
             </form>
         </Form>

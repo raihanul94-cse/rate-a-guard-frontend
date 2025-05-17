@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -7,8 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { useEffect } from 'react';
 import { IAddressForm } from '@/types/user';
+import { genericClient } from '@/lib/generic-api-helper';
 
 const addressFormSchema = z.object({
     address: z
@@ -32,6 +33,8 @@ interface IProps {
 
 export function AddressForm({ data }: IProps) {
     const { toast } = useToast();
+    const [isLoading, setIsLoading] = useState(false);
+
 
     const form = useForm<AddressFormValues>({
         resolver: zodResolver(addressFormSchema),
@@ -44,12 +47,44 @@ export function AddressForm({ data }: IProps) {
         },
     });
 
-    function onSubmit(data: AddressFormValues) {
-        toast({
-            title: 'Profile updated',
-            description: 'Your profile has been updated successfully.',
-        });
-        console.log(data);
+    async function onSubmit(values: AddressFormValues) {
+        setIsLoading(true);
+
+        try {
+            const response = await genericClient({
+                url: '/api/users/profile',
+                method: 'put',
+                data: values
+            });
+
+            if (response.status === 'success') {
+                toast({
+                    title: 'Profile updated',
+                    description: 'Your profile has been updated successfully.',
+                });
+                data.address = response.data.address;
+                data.city = response.data.city;
+                data.state = response.data.state;
+                data.country = response.data.country;
+                data.zip = response.data.zip;
+                form.reset({
+                    address: response.data.address,
+                    city: response.data.city,
+                    state: response.data.state,
+                    country: response.data.country,
+                    zip: response.data.zip,
+                });
+            }
+        } catch (error) {
+            console.log(error);
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Something went wrong. Please try again.',
+            });
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     useEffect(() => {
@@ -135,7 +170,7 @@ export function AddressForm({ data }: IProps) {
 
                 {
                     form.formState.isDirty &&
-                    <Button type="submit">Save Changes</Button>
+                    <Button type="submit" disabled={isLoading}>{isLoading ? 'Saving Changes...' : 'Save Changes'}</Button>
                 }
             </form>
         </Form>

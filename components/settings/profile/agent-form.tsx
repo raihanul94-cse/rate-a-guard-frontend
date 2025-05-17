@@ -8,7 +8,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { IAgentForm } from '@/types/user';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { genericClient } from '@/lib/generic-api-helper';
 
 const agentFormSchema = z.object({
     registeredAgentFirstName: z
@@ -31,6 +32,7 @@ interface IProps {
 
 export function AgentForm({ data }: IProps) {
     const { toast } = useToast();
+    const [isLoading, setIsLoading] = useState(false);
 
     const form = useForm<AgentFormValues>({
         resolver: zodResolver(agentFormSchema),
@@ -42,12 +44,42 @@ export function AgentForm({ data }: IProps) {
         },
     });
 
-    function onSubmit(data: AgentFormValues) {
-        toast({
-            title: 'Profile updated',
-            description: 'Your profile has been updated successfully.',
-        });
-        console.log(data);
+    async function onSubmit(values: AgentFormValues) {
+        setIsLoading(true);
+
+        try {
+            const response = await genericClient({
+                url: '/api/users/profile',
+                method: 'put',
+                data: values
+            });
+
+            if (response.status === 'success') {
+                toast({
+                    title: 'Profile updated',
+                    description: 'Your profile has been updated successfully.',
+                });
+                data.registeredAgentFirstName = response.data.registeredAgentFirstName;
+                data.registeredAgentLastName = response.data.registeredAgentLastName;
+                data.emailAddress = response.data.emailAddress;
+                data.phoneNumber = response.data.phoneNumber;
+                form.reset({
+                    registeredAgentFirstName: response.data.registeredAgentFirstName,
+                    registeredAgentLastName: response.data.registeredAgentLastName,
+                    emailAddress: response.data.emailAddress,
+                    phoneNumber: response.data.phoneNumber,
+                });
+            }
+        } catch (error) {
+            console.log(error);
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Something went wrong. Please try again.',
+            });
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     useEffect(() => {
@@ -103,9 +135,22 @@ export function AgentForm({ data }: IProps) {
                         </FormItem>
                     )}
                 />
+                <FormField
+                    control={form.control}
+                    name="phoneNumber"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Phone Number</FormLabel>
+                            <FormControl>
+                                <Input placeholder="+1-555-123-4567" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
                 {
                     form.formState.isDirty &&
-                    <Button type="submit">Save Changes</Button>
+                    <Button type="submit" disabled={isLoading}>{isLoading ? 'Saving Changes...' : 'Save Changes'}</Button>
                 }
             </form>
         </Form>

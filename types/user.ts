@@ -50,7 +50,7 @@ export interface IAccountForm {
 }
 
 export interface IChangePasswordForm {
-    oldPassword: string;
+    currentPassword: string;
     newPassword: string;
     confirmPassword: string;
 }

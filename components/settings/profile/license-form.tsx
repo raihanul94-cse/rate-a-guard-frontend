@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -8,7 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { ILicenseForm } from '@/types/user';
-import { useEffect } from 'react';
+import { genericClient } from '@/lib/generic-api-helper';
 
 const licenseFormSchema = z.object({
     companyName: z
@@ -37,6 +38,8 @@ interface IProps {
 
 export function LicenseForm({ data }: IProps) {
     const { toast } = useToast();
+    const [isLoading, setIsLoading] = useState(false);
+
 
     const form = useForm<LicenseFormValues>({
         resolver: zodResolver(licenseFormSchema),
@@ -48,12 +51,42 @@ export function LicenseForm({ data }: IProps) {
         },
     });
 
-    function onSubmit(data: LicenseFormValues) {
-        toast({
-            title: 'Profile updated',
-            description: 'Your profile has been updated successfully.',
-        });
-        console.log(data);
+    async function onSubmit(values: LicenseFormValues) {
+        setIsLoading(true);
+
+        try {
+            const response = await genericClient({
+                url: '/api/users/profile',
+                method: 'put',
+                data: values
+            });
+
+            if (response.status === 'success') {
+                toast({
+                    title: 'Profile updated',
+                    description: 'Your profile has been updated successfully.',
+                });
+                data.companyName = response.data.companyName;
+                data.licenseNumber = response.data.licenseNumber;
+                data.licenseType = response.data.licenseType;
+                data.licenseExpirationDate = response.data.licenseExpirationDate;
+                form.reset({
+                    companyName: response.data.companyName,
+                    licenseNumber: response.data.licenseNumber,
+                    licenseType: response.data.licenseType,
+                    licenseExpirationDate: response.data.licenseExpirationDate,
+                });
+            }
+        } catch (error) {
+            console.log(error);
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Something went wrong. Please try again.',
+            });
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     useEffect(() => {
@@ -125,7 +158,7 @@ export function LicenseForm({ data }: IProps) {
                 />
                 {
                     form.formState.isDirty &&
-                    <Button type="submit">Save Changes</Button>
+                    <Button type="submit" disabled={isLoading}>{isLoading ? 'Saving Changes...' : 'Save Changes'}</Button>
                 }
 
             </form>

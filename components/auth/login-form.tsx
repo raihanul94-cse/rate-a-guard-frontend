@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -21,7 +21,7 @@ const formSchema = z.object({
 export function LoginForm() {
     const router = useRouter();
     const { toast } = useToast();
-    const [isLoading, setIsLoading] = React.useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),

@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -7,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
+import { useTheme } from 'next-themes';
 
 const appearanceFormSchema = z.object({
     theme: z.enum(['light', 'dark'], {
@@ -18,6 +20,7 @@ type AppearanceFormValues = z.infer<typeof appearanceFormSchema>;
 
 export function AppearanceForm() {
     const { toast } = useToast();
+    const { theme, setTheme } = useTheme();
 
     const form = useForm<AppearanceFormValues>({
         resolver: zodResolver(appearanceFormSchema),
@@ -26,13 +29,19 @@ export function AppearanceForm() {
         },
     });
 
-    function onSubmit(data: AppearanceFormValues) {
+    function onSubmit(values: AppearanceFormValues) {
         toast({
             title: 'Profile updated',
             description: 'Your profile has been updated successfully.',
         });
-        console.log(data);
+        setTheme(values.theme);
     }
+
+    useEffect(() => {
+        if (theme === 'light' || theme === 'dark') {
+            form.reset({ theme });
+        }
+    }, [theme, form]);
 
     return (
         <Form {...form}>
@@ -46,8 +55,8 @@ export function AppearanceForm() {
                             <FormDescription>Select the theme for the dashboard.</FormDescription>
                             <FormMessage />
                             <RadioGroup
+                                value={field.value}
                                 onValueChange={field.onChange}
-                                defaultValue={field.value}
                                 className="grid max-w-md grid-cols-2 gap-8 pt-2"
                             >
                                 <FormItem>

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -7,33 +8,72 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { genericClient } from '@/lib/generic-api-helper';
 
-const changePasswordFormSchema = z.object({
-    oldPassword: z.string().min(8, 'Password must be at least 8 characters'),
-    newPassword: z.string().min(8, 'Password must be at least 8 characters'),
-    confirmPassword: z.string().min(8, 'Password must be at least 8 characters'),
-});
+const changePasswordFormSchema = z
+    .object({
+        currentPassword: z
+            .string()
+            .min(8, "Password must be at least 8 characters"),
+        newPassword: z
+            .string()
+            .min(8, "Password must be at least 8 characters"),
+        confirmPassword: z
+            .string()
+            .min(8, "Password must be at least 8 characters"),
+    })
+    .refine((data) => data.newPassword === data.confirmPassword, {
+        path: ["confirmPassword"],
+        message: "Passwords do not match",
+    });
 
 type ChangePasswordFormValues = z.infer<typeof changePasswordFormSchema>;
 
 export function ChangePasswordForm() {
     const { toast } = useToast();
+    const [isLoading, setIsLoading] = useState(false);
+
 
     const form = useForm<ChangePasswordFormValues>({
         resolver: zodResolver(changePasswordFormSchema),
         defaultValues: {
-            oldPassword: '',
+            currentPassword: '',
             newPassword: '',
             confirmPassword: ''
         },
     });
 
-    function onSubmit(data: ChangePasswordFormValues) {
-        toast({
-            title: 'Profile updated',
-            description: 'Your profile has been updated successfully.',
-        });
-        console.log(data);
+    async function onSubmit(values: ChangePasswordFormValues) {
+        setIsLoading(true);
+
+        try {
+            const response = await genericClient({
+                url: '/api/users/change-password',
+                method: 'put',
+                data: values
+            });
+
+            if (response.status === 'success') {
+                toast({
+                    title: 'Profile updated',
+                    description: 'Your profile has been updated successfully.',
+                });
+                form.reset({
+                    currentPassword: '',
+                    newPassword: '',
+                    confirmPassword: ''
+                });
+            }
+        } catch (error) {
+            console.log(error);
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Something went wrong. Please try again.',
+            });
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     return (
@@ -41,10 +81,10 @@ export function ChangePasswordForm() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
                 <FormField
                     control={form.control}
-                    name="oldPassword"
+                    name="currentPassword"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Old Password</FormLabel>
+                            <FormLabel>Current Password</FormLabel>
                             <FormControl>
                                 <Input type="password" {...field} />
                             </FormControl>
@@ -80,7 +120,7 @@ export function ChangePasswordForm() {
                 />
                 {
                     form.formState.isDirty &&
-                    <Button type="submit">Save Changes</Button>
+                    <Button type="submit" disabled={isLoading}>{isLoading ? 'Saving Changes...' : 'Save Changes'}</Button>
                 }
             </form>
         </Form>
