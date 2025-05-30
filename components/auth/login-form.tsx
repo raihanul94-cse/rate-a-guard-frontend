@@ -21,7 +21,7 @@ const formSchema = z.object({
 export function LoginForm() {
     const router = useRouter();
     const { toast } = useToast();
-    const [isLoading, setIsLoading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -32,13 +32,13 @@ export function LoginForm() {
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        setIsLoading(true);
+        setIsSubmitting(true);
 
         try {
             const response = await genericClient({
                 url: '/api/auth/login',
                 method: 'post',
-                data: values
+                data: values,
             });
 
             if (response.status === 'success') {
@@ -54,7 +54,7 @@ export function LoginForm() {
                 description: 'Something went wrong. Please try again.',
             });
         } finally {
-            setIsLoading(false);
+            setIsSubmitting(false);
         }
     }
 
@@ -72,7 +72,7 @@ export function LoginForm() {
                                     <Input
                                         placeholder="username@example.com"
                                         type="email"
-                                        disabled={isLoading}
+                                        disabled={isSubmitting}
                                         {...field}
                                     />
                                 </FormControl>
@@ -87,14 +87,14 @@ export function LoginForm() {
                             <FormItem>
                                 <FormLabel>Password</FormLabel>
                                 <FormControl>
-                                    <Input type="password" disabled={isLoading} {...field} />
+                                    <Input type="password" disabled={isSubmitting} {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
-                    <Button className="w-full" type="submit" disabled={isLoading}>
-                        {isLoading ? 'Logging in...' : 'Login in with Email'}
+                    <Button className="w-full" type="submit" disabled={isSubmitting}>
+                        {isSubmitting ? 'Logging in...' : 'Login in with Email'}
                     </Button>
                 </form>
             </Form>
@@ -106,7 +106,7 @@ export function LoginForm() {
                     <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
                 </div>
             </div>
-            <Button variant="outline" type="button" disabled={isLoading}>
+            <Button variant="outline" type="button" disabled={isSubmitting}>
                 <Github className="mr-2 h-4 w-4" />
                 Github
             </Button>

@@ -28,13 +28,12 @@ const addressFormSchema = z.object({
 type AddressFormValues = z.infer<typeof addressFormSchema>;
 
 interface IProps {
-    data: IAddressForm
+    data: IAddressForm;
 }
 
 export function AddressForm({ data }: IProps) {
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
-
 
     const form = useForm<AddressFormValues>({
         resolver: zodResolver(addressFormSchema),
@@ -52,9 +51,9 @@ export function AddressForm({ data }: IProps) {
 
         try {
             const response = await genericClient({
-                url: '/api/users/profile',
+                url: '/api/user/profile',
                 method: 'put',
-                data: values
+                data: values,
             });
 
             if (response.status === 'success') {
@@ -94,7 +93,7 @@ export function AddressForm({ data }: IProps) {
                 city: data.city,
                 state: data.state,
                 country: data.country,
-                zip: data.zip
+                zip: data.zip,
             });
         }
     }, [data, form]);
@@ -168,10 +167,11 @@ export function AddressForm({ data }: IProps) {
                     )}
                 />
 
-                {
-                    form.formState.isDirty &&
-                    <Button type="submit" disabled={isLoading}>{isLoading ? 'Saving Changes...' : 'Save Changes'}</Button>
-                }
+                {form.formState.isDirty && (
+                    <Button type="submit" disabled={isLoading}>
+                        {isLoading ? 'Saving Changes...' : 'Save Changes'}
+                    </Button>
+                )}
             </form>
         </Form>
     );

@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Menu, User, BarChart2, Settings, HelpCircle, LogOut } from 'lucide-react';
 import { cookies } from 'next/headers';
+import Image from 'next/image';
 
 export async function HomeNavbar() {
     const cookieStore = await cookies();
@@ -22,8 +23,7 @@ export async function HomeNavbar() {
             <div className="container flex h-16 items-center justify-between mx-auto px-4">
                 <div className="flex items-center gap-8">
                     <Link href="/" className="flex items-center space-x-2">
-                        <BarChart2 className="h-6 w-6" />
-                        <span className="font-bold text-xl">SaaS App</span>
+                        <Image src="/rag.svg" alt="" width={150} height={100} style={{ height: 'auto', width: 'auto' }}/>
                     </Link>
                 </div>
 

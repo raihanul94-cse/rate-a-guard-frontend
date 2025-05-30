@@ -7,7 +7,7 @@ import { IUserWithCompanyResponse } from '@/types/user';
 
 async function getSettingsData() {
     try {
-        const response = await axiosHelper.get<TResponse<IUserWithCompanyResponse>>('/api/users/profile');
+        const response = await axiosHelper.get<TResponse<IUserWithCompanyResponse>>('/api/user/profile');
         if (response.status === 'success') {
             return response.data;
         }
@@ -44,9 +44,11 @@ export default async function SettingsPage() {
                     <TabsTrigger value="address">Change Password</TabsTrigger>
                 </TabsList>
                 <TabsContent value="license">
-                    <AccountForm data={{
-                        emailAddress: response.emailAddress
-                    }} />
+                    <AccountForm
+                        data={{
+                            emailAddress: response.emailAddress,
+                        }}
+                    />
                 </TabsContent>
                 <TabsContent value="address">
                     <ChangePasswordForm />

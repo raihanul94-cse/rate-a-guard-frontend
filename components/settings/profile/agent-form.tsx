@@ -27,7 +27,7 @@ const agentFormSchema = z.object({
 type AgentFormValues = z.infer<typeof agentFormSchema>;
 
 interface IProps {
-    data: IAgentForm
+    data: IAgentForm;
 }
 
 export function AgentForm({ data }: IProps) {
@@ -49,9 +49,9 @@ export function AgentForm({ data }: IProps) {
 
         try {
             const response = await genericClient({
-                url: '/api/users/profile',
+                url: '/api/user/profile',
                 method: 'put',
-                data: values
+                data: values,
             });
 
             if (response.status === 'success') {
@@ -148,10 +148,11 @@ export function AgentForm({ data }: IProps) {
                         </FormItem>
                     )}
                 />
-                {
-                    form.formState.isDirty &&
-                    <Button type="submit" disabled={isLoading}>{isLoading ? 'Saving Changes...' : 'Save Changes'}</Button>
-                }
+                {form.formState.isDirty && (
+                    <Button type="submit" disabled={isLoading}>
+                        {isLoading ? 'Saving Changes...' : 'Save Changes'}
+                    </Button>
+                )}
             </form>
         </Form>
     );

@@ -14,26 +14,25 @@ const POST = async (request: Request) => {
 
         if (method === 'get') {
             const response = await axiosHelper.get(url, {
-                params: params
+                params: params,
             });
 
             return NextResponse.json(response);
         } else if (method === 'post') {
             const response = await axiosHelper.post(url, data, {
-                params: params
+                params: params,
             });
-            console.log(response);
-
+        
             return NextResponse.json(response);
         } else if (method === 'put') {
             const response = await axiosHelper.put(url, data, {
-                params: params
+                params: params,
             });
 
             return NextResponse.json(response);
         } else if (method === 'delete') {
             const response = await axiosHelper.delete(url, {
-                params: params
+                params: params,
             });
 
             return NextResponse.json(response);

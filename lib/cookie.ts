@@ -13,7 +13,7 @@ export function setJwtToken(authTokens: IAuthTokens, options = {}) {
         Cookies.set('access-token', authTokens.access.token, {
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
-            expires: 1 / 24,
+            expires: 12,
             ...options,
         });
     }
@@ -22,7 +22,7 @@ export function setJwtToken(authTokens: IAuthTokens, options = {}) {
         Cookies.set('refresh-token', authTokens.refresh.token, {
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
-            expires: 1 / 24,
+            expires: 24,
             ...options,
         });
     }

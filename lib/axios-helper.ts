@@ -33,7 +33,8 @@ class AxiosHelper {
                 if (error.response?.status === 401) {
                     await this.clearTokens();
                 }
-
+                console.log(JSON.stringify(error));
+                
                 return Promise.reject(error);
             }
         );

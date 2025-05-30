@@ -8,7 +8,7 @@ import { IUserWithCompanyResponse } from '@/types/user';
 
 async function getSettingsData() {
     try {
-        const response = await axiosHelper.get<TResponse<IUserWithCompanyResponse>>('/api/users/profile');
+        const response = await axiosHelper.get<TResponse<IUserWithCompanyResponse>>('/api/user/profile');
         if (response.status === 'success') {
             return response.data;
         }
@@ -46,29 +46,35 @@ export default async function SettingsPage() {
                     <TabsTrigger value="agent">Agent</TabsTrigger>
                 </TabsList>
                 <TabsContent value="license">
-                    <LicenseForm data={{
-                        companyName: response.company.companyName,
-                        licenseNumber: response.company.licenseNumber,
-                        licenseType: response.company.licenseType,
-                        licenseExpirationDate: response.company.licenseExpirationDate
-                    }} />
+                    <LicenseForm
+                        data={{
+                            companyName: response.company.companyName,
+                            licenseNumber: response.company.licenseNumber,
+                            licenseType: response.company.licenseType,
+                            licenseExpirationDate: response.company.licenseExpirationDate,
+                        }}
+                    />
                 </TabsContent>
                 <TabsContent value="address">
-                    <AddressForm data={{
-                        address: response.company.address,
-                        city: response.company.city,
-                        state: response.company.state,
-                        country: response.company.country,
-                        zip: response.company.zip
-                    }} />
+                    <AddressForm
+                        data={{
+                            address: response.company.address,
+                            city: response.company.city,
+                            state: response.company.state,
+                            country: response.company.country,
+                            zip: response.company.zip,
+                        }}
+                    />
                 </TabsContent>
                 <TabsContent value="agent">
-                    <AgentForm data={{
-                        registeredAgentFirstName: response.company.registeredAgentFirstName,
-                        registeredAgentLastName: response.company.registeredAgentLastName,
-                        emailAddress: response.company.emailAddress,
-                        phoneNumber: response.company.phoneNumber
-                    }} />
+                    <AgentForm
+                        data={{
+                            registeredAgentFirstName: response.company.registeredAgentFirstName,
+                            registeredAgentLastName: response.company.registeredAgentLastName,
+                            emailAddress: response.company.emailAddress,
+                            phoneNumber: response.company.phoneNumber,
+                        }}
+                    />
                 </TabsContent>
             </Tabs>
         </div>

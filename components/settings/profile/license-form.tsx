@@ -11,35 +11,40 @@ import { useToast } from '@/hooks/use-toast';
 import { ILicenseForm } from '@/types/user';
 import { genericClient } from '@/lib/generic-api-helper';
 
+const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+
 const licenseFormSchema = z.object({
     companyName: z
         .string()
-        .min(2, { message: 'Company name must be at least 2 characters.' })
-        .max(30, { message: 'Company name must not be longer than 30 characters.' }),
+        .min(2, { message: 'Company name must be at least 2 characters long.' })
+        .max(30, { message: 'Company name can’t be longer than 30 characters.' }),
+
     licenseNumber: z
         .string()
-        .min(2, { message: 'License number must be at least 2 characters.' })
-        .max(30, { message: 'License number must not be longer than 30 characters.' }),
+        .min(2, { message: 'License number must be at least 2 characters long.' })
+        .max(30, { message: 'License number can’t be longer than 30 characters.' }),
+
     licenseType: z
         .string()
-        .min(2, { message: 'License type must be at least 2 characters.' })
-        .max(30, { message: 'License type must not be longer than 30 characters.' }),
+        .min(2, { message: 'License type must be at least 2 characters long.' })
+        .max(30, { message: 'License type can’t be longer than 30 characters.' }),
+
     licenseExpirationDate: z
         .string({
-            required_error: 'Please select a date.',
+            required_error: 'Please select the license expiration date.',
         })
+        .regex(dateRegex, { message: 'Date must be in the format.' }),
 });
 
 type LicenseFormValues = z.infer<typeof licenseFormSchema>;
 
 interface IProps {
-    data: ILicenseForm
+    data: ILicenseForm;
 }
 
 export function LicenseForm({ data }: IProps) {
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
-
 
     const form = useForm<LicenseFormValues>({
         resolver: zodResolver(licenseFormSchema),
@@ -47,7 +52,7 @@ export function LicenseForm({ data }: IProps) {
             companyName: '',
             licenseNumber: '',
             licenseType: '',
-            licenseExpirationDate: ''
+            licenseExpirationDate: '',
         },
     });
 
@@ -56,9 +61,9 @@ export function LicenseForm({ data }: IProps) {
 
         try {
             const response = await genericClient({
-                url: '/api/users/profile',
+                url: '/api/user/profile',
                 method: 'put',
-                data: values
+                data: values,
             });
 
             if (response.status === 'success') {
@@ -156,11 +161,11 @@ export function LicenseForm({ data }: IProps) {
                         </FormItem>
                     )}
                 />
-                {
-                    form.formState.isDirty &&
-                    <Button type="submit" disabled={isLoading}>{isLoading ? 'Saving Changes...' : 'Save Changes'}</Button>
-                }
-
+                {form.formState.isDirty && (
+                    <Button type="submit" disabled={isLoading}>
+                        {isLoading ? 'Saving Changes...' : 'Save Changes'}
+                    </Button>
+                )}
             </form>
         </Form>
     );

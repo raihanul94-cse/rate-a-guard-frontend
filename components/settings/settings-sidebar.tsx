@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { User, Bell, Moon, Monitor, UserCog } from 'lucide-react';
+import { User, Bell, Monitor, UserCog } from 'lucide-react';
 
 const sidebarNavItems = [
     {
@@ -25,11 +25,6 @@ const sidebarNavItems = [
         title: 'Notifications',
         href: '/settings/notifications',
         icon: Bell,
-    },
-    {
-        title: 'Display',
-        href: '/settings/display',
-        icon: Moon,
     },
 ];
 

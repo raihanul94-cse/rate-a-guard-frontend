@@ -12,19 +12,13 @@ import { genericClient } from '@/lib/generic-api-helper';
 
 const changePasswordFormSchema = z
     .object({
-        currentPassword: z
-            .string()
-            .min(8, "Password must be at least 8 characters"),
-        newPassword: z
-            .string()
-            .min(8, "Password must be at least 8 characters"),
-        confirmPassword: z
-            .string()
-            .min(8, "Password must be at least 8 characters"),
+        currentPassword: z.string().min(8, 'Password must be at least 8 characters'),
+        newPassword: z.string().min(8, 'Password must be at least 8 characters'),
+        confirmPassword: z.string().min(8, 'Password must be at least 8 characters'),
     })
     .refine((data) => data.newPassword === data.confirmPassword, {
-        path: ["confirmPassword"],
-        message: "Passwords do not match",
+        path: ['confirmPassword'],
+        message: 'Passwords do not match',
     });
 
 type ChangePasswordFormValues = z.infer<typeof changePasswordFormSchema>;
@@ -33,13 +27,12 @@ export function ChangePasswordForm() {
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
 
-
     const form = useForm<ChangePasswordFormValues>({
         resolver: zodResolver(changePasswordFormSchema),
         defaultValues: {
             currentPassword: '',
             newPassword: '',
-            confirmPassword: ''
+            confirmPassword: '',
         },
     });
 
@@ -48,9 +41,9 @@ export function ChangePasswordForm() {
 
         try {
             const response = await genericClient({
-                url: '/api/users/change-password',
+                url: '/api/user/change-password',
                 method: 'put',
-                data: values
+                data: values,
             });
 
             if (response.status === 'success') {
@@ -61,7 +54,7 @@ export function ChangePasswordForm() {
                 form.reset({
                     currentPassword: '',
                     newPassword: '',
-                    confirmPassword: ''
+                    confirmPassword: '',
                 });
             }
         } catch (error) {
@@ -118,10 +111,11 @@ export function ChangePasswordForm() {
                         </FormItem>
                     )}
                 />
-                {
-                    form.formState.isDirty &&
-                    <Button type="submit" disabled={isLoading}>{isLoading ? 'Saving Changes...' : 'Save Changes'}</Button>
-                }
+                {form.formState.isDirty && (
+                    <Button type="submit" disabled={isLoading}>
+                        {isLoading ? 'Saving Changes...' : 'Save Changes'}
+                    </Button>
+                )}
             </form>
         </Form>
     );

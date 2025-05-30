@@ -18,7 +18,7 @@ const accountFormSchema = z.object({
 type AccountFormValues = z.infer<typeof accountFormSchema>;
 
 interface IProps {
-    data: IAccountForm
+    data: IAccountForm;
 }
 
 export function AccountForm({ data }: IProps) {
@@ -37,9 +37,9 @@ export function AccountForm({ data }: IProps) {
 
         try {
             const response = await genericClient({
-                url: '/api/users/change-email-address',
+                url: '/api/user/change-email-address',
                 method: 'put',
-                data: values
+                data: values,
             });
 
             if (response.status === 'success') {
@@ -49,7 +49,7 @@ export function AccountForm({ data }: IProps) {
                 });
                 data.emailAddress = response.data.emailAddress;
                 form.reset({
-                    emailAddress: response.data.emailAddress
+                    emailAddress: response.data.emailAddress,
                 });
             }
         } catch (error) {
@@ -88,10 +88,11 @@ export function AccountForm({ data }: IProps) {
                         </FormItem>
                     )}
                 />
-                {
-                    form.formState.isDirty &&
-                    <Button type="submit" disabled={isLoading}>{isLoading ? 'Saving Changes...' : 'Save Changes'}</Button>
-                }
+                {form.formState.isDirty && (
+                    <Button type="submit" disabled={isLoading}>
+                        {isLoading ? 'Saving Changes...' : 'Save Changes'}
+                    </Button>
+                )}
             </form>
         </Form>
     );
