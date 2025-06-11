@@ -9,6 +9,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { genericClient } from '@/lib/generic-api-helper';
+import { ApiError } from '@/lib/api-error';
+import { IErrorResponse } from '@/types/response';
 
 const changePasswordFormSchema = z
     .object({
@@ -57,13 +59,16 @@ export function ChangePasswordForm() {
                     confirmPassword: '',
                 });
             }
-        } catch (error) {
-            console.log(error);
-            toast({
-                variant: 'destructive',
-                title: 'Error',
-                description: 'Something went wrong. Please try again.',
-            });
+        } catch (error: unknown) {
+            if (error instanceof ApiError) {
+                const details = error.details as IErrorResponse;
+
+                toast({
+                    variant: 'destructive',
+                    title: 'Error',
+                    description: details.error.message,
+                });
+            }
         } finally {
             setIsLoading(false);
         }

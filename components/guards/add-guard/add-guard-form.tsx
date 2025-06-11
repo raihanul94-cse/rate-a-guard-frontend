@@ -1,41 +1,36 @@
 'use client';
 
 import { useState } from 'react';
-import { Stepper } from '@/components/ui/stepper';
-import { PersonalInfoForm } from './personal-info-form';
-import { AddressForm } from './address-form';
-import { LicenseForm } from './license-form';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { PersonalInfoForm } from '@/components/guards/add-guard/personal-info-form';
+import { AddressForm } from '@/components/guards/add-guard/address-form';
+import { LicenseForm } from '@/components/guards/add-guard/license-form';
 import { useToast } from '@/hooks/use-toast';
 import { genericClient } from '@/lib/generic-api-helper';
 import { useRouter } from 'next/navigation';
-import { Success } from './success';
+import { Success } from '@/components/guards/add-guard/success';
 import { IGuard } from '@/types/guard';
+import { ApiError } from '@/lib/api-error';
+import { IErrorResponse } from '@/types/response';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export function AddGuardForm() {
     const { toast } = useToast();
     const router = useRouter();
     const [values, setValues] = useState<Record<string, unknown>>({});
-    const [activeStepIndex, setActiveStepIndex] = useState(0);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [guard, setGuard] = useState<IGuard | null>(null);
+    const [currentStep, setCurrentStep] = useState('personal-info');
 
-    function goNextStep() {
-        setActiveStepIndex((index) => index + 1);
-    }
-
-    function goPrevStep() {
-        setActiveStepIndex((index) => index - 1);
-    }
-
-    function handleNextStep(stepValues: Record<string, unknown>) {
+    function handleNextStep(stepValues: Record<string, unknown>, step: string) {
         setValues((prev) => ({ ...prev, ...stepValues }));
-        goNextStep();
+        setCurrentStep(step);
     }
 
-    function handleBackStep(stepValues: Record<string, unknown>) {
+    function handleBackStep(stepValues: Record<string, unknown>, step: string) {
         setValues((prev) => ({ ...prev, ...stepValues }));
-        goPrevStep();
+        setCurrentStep(step);
     }
 
     async function handleSubmitGuardInfo(stepValues: Record<string, unknown>) {
@@ -58,59 +53,27 @@ export function AddGuardForm() {
                 setIsSuccess(true);
                 setGuard(response.data);
             }
-        } catch (error) {
-            console.log(error);
-            toast({
-                variant: 'destructive',
-                title: 'Error',
-                description: 'Something went wrong. Please try again.',
-            });
+        } catch (error: unknown) {
+            if (error instanceof ApiError) {
+                const details = error.details as IErrorResponse;
+
+                toast({
+                    variant: 'destructive',
+                    title: 'Error',
+                    description: details.error.message,
+                });
+            }
         } finally {
             setIsSubmitting(false);
         }
     }
-
-    const steps = [
-        {
-            legend: 'Personal Info',
-            content: (
-                <PersonalInfoForm
-                    defaultValues={values}
-                    handleNextStep={handleNextStep}
-                    handleBackStep={handleBackStep}
-                />
-            ),
-        },
-        {
-            legend: 'Address',
-            content: (
-                <AddressForm defaultValues={values} handleNextStep={handleNextStep} handleBackStep={handleBackStep} />
-            ),
-        },
-        {
-            legend: 'License',
-            content: (
-                <LicenseForm
-                    defaultValues={values}
-                    handleNextStep={handleSubmitGuardInfo}
-                    handleBackStep={handleBackStep}
-                    isSubmitting={isSubmitting}
-                />
-            ),
-        },
-    ];
-
-    const activeStep = steps[activeStepIndex];
-
 
     const isFormComplete = guard && isSuccess;
 
     return (
         <div className="container mx-auto py-10">
             <div className="flex flex-col items-center">
-                {!isFormComplete && (
-                    <h1 className="text-3xl text-center font-bold mb-6">Add New Guard</h1>
-                )}
+                {!isFormComplete && <h1 className="text-3xl text-center font-bold mb-6">Register a Guard</h1>}
 
                 <div className="w-[60%]">
                     {isFormComplete ? (
@@ -120,25 +83,48 @@ export function AddGuardForm() {
                             onRate={() => router.push(`/guards/${guard.uuid}/add-rating`)}
                         />
                     ) : (
-                        <>
-                            <Stepper
-                                steps={steps}
-                                currentStep={activeStepIndex}
-                                variant="default"
-                                className="my-4"
-                            />
-                            <div className="min-h-[150px]">{activeStep.content}</div>
-                        </>
+                        <Card>
+                            <CardHeader className="text-start">
+                                <CardTitle className="text-xl">Guard Information</CardTitle>
+                                <CardDescription className="text-sm">
+                                    Please provide the guard&apos;s details. All information will be verified.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <Tabs value={currentStep} className="w-full">
+                                    <TabsList className="grid w-full grid-cols-3 mb-8">
+                                        <TabsTrigger value="personal-info">Personal Info</TabsTrigger>
+                                        <TabsTrigger value="address">Address</TabsTrigger>
+                                        <TabsTrigger value="license">License</TabsTrigger>
+                                    </TabsList>
+                                    <TabsContent value="personal-info">
+                                        <PersonalInfoForm
+                                            handleNextStep={(stepValues) => handleNextStep(stepValues, 'address')}
+                                            handleBackStep={(stepValues) => handleBackStep(stepValues, 'personal-info')}
+                                            defaultValues={values}
+                                        />
+                                    </TabsContent>
+                                    <TabsContent value="address">
+                                        <AddressForm
+                                            handleNextStep={(stepValues) => handleNextStep(stepValues, 'license')}
+                                            handleBackStep={(stepValues) => handleBackStep(stepValues, 'personal-info')}
+                                            defaultValues={values}
+                                        />
+                                    </TabsContent>
+                                    <TabsContent value="license">
+                                        <LicenseForm
+                                            handleNextStep={(stepValues) => handleSubmitGuardInfo(stepValues)}
+                                            handleBackStep={(stepValues) => handleBackStep(stepValues, 'address')}
+                                            defaultValues={values}
+                                            isSubmitting={isSubmitting}
+                                        />
+                                    </TabsContent>
+                                </Tabs>
+                            </CardContent>
+                        </Card>
                     )}
                 </div>
             </div>
-
-            {!isFormComplete && (
-                <footer className="mt-8 text-center text-gray-600">
-                    <p>Notes: This information will be reviewed by the admin.</p>
-                </footer>
-            )}
         </div>
     );
-
 }

@@ -7,22 +7,40 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+const minDate = new Date('1900-01-01');
 
-const formSchema = z.object({
-    firstName: z.string().min(1, 'Please enter your first name.'),
-    lastName: z.string().min(1, 'Please enter your last name.'),
-    emailAddress: z.string().email('That doesn’t look like a valid email. Please double-check.'),
-    phoneNumber: z.string().min(1, 'Please provide your phone number.'),
-    joiningDate: z
-        .string({
-            required_error: 'Please select the joining date.',
-        })
-        .regex(dateRegex, 'Please select a valid joining date.'),
-    resignationDate: z
-        .string()
-        .optional()
-        .refine((val) => !val || dateRegex.test(val), 'Please select a valid resignation date.'),
-});
+const formSchema = z
+    .object({
+        firstName: z.string().min(1, 'Please enter your first name.'),
+        lastName: z.string().min(1, 'Please enter your last name.'),
+        emailAddress: z.string().email('That doesn’t look like a valid email. Please double-check.'),
+        phoneNumber: z.string().min(1, 'Please provide your phone number.'),
+        joiningDate: z
+            .string({
+                required_error: 'Please select the joining date.',
+            })
+            .regex(dateRegex, 'Please select a valid joining date.'),
+        resignationDate: z
+            .string()
+            .optional()
+            .refine((val) => !val || dateRegex.test(val), 'Please select a valid resignation date.'),
+    })
+    .refine(
+        (data) => {
+            const joining = new Date(data.joiningDate);
+            if (joining < minDate) return false;
+            if (data.resignationDate) {
+                const resignation = new Date(data.resignationDate);
+                if (resignation < minDate) return false;
+                if (resignation <= joining) return false;
+            }
+            return true;
+        },
+        {
+            message: 'Resignation date must be after joining date and both dates must be after the year 1900.',
+            path: ['resignationDate'],
+        }
+    );
 
 interface IProps {
     handleNextStep(stepValues: Record<string, unknown>): void;
@@ -62,7 +80,6 @@ export function PersonalInfoForm({ handleNextStep, handleBackStep, defaultValues
         <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <fieldset className="space-y-4">
-                    <legend className="text-xl font-semibold">Personal Info</legend>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <FormField
                             control={control}
@@ -71,7 +88,7 @@ export function PersonalInfoForm({ handleNextStep, handleBackStep, defaultValues
                                 <FormItem>
                                     <FormLabel>First Name</FormLabel>
                                     <FormControl>
-                                        <Input {...field} value={field.value ?? ''} />
+                                        <Input {...field} placeholder="John" value={field.value ?? ''} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -84,7 +101,7 @@ export function PersonalInfoForm({ handleNextStep, handleBackStep, defaultValues
                                 <FormItem>
                                     <FormLabel>Last Name</FormLabel>
                                     <FormControl>
-                                        <Input {...field} />
+                                        <Input placeholder="Doe" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -97,7 +114,7 @@ export function PersonalInfoForm({ handleNextStep, handleBackStep, defaultValues
                                 <FormItem>
                                     <FormLabel>Email Address</FormLabel>
                                     <FormControl>
-                                        <Input type="email" {...field} />
+                                        <Input type="email" placeholder="you@example.com" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -110,7 +127,7 @@ export function PersonalInfoForm({ handleNextStep, handleBackStep, defaultValues
                                 <FormItem>
                                     <FormLabel>Phone Number</FormLabel>
                                     <FormControl>
-                                        <Input {...field} />
+                                        <Input placeholder="+1-555-123-4567" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -144,7 +161,7 @@ export function PersonalInfoForm({ handleNextStep, handleBackStep, defaultValues
                         />
                     </div>
                 </fieldset>
-                <div className="flex align-center space-x-2">
+                <div className="flex align-center space-x-4">
                     <Button className="w-full" variant={'outline'} onClick={handleBack} disabled={true}>
                         Back
                     </Button>

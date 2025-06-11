@@ -35,10 +35,11 @@ const RatingRehirable = forwardRef<HTMLDivElement, IProps>(({ value, onChange },
                     className="flex flex-col items-center"
                 >
                     <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all ${selected === 'yes'
+                        className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all ${
+                            selected === 'yes'
                                 ? 'bg-green-400 border-transparent'
                                 : 'border-gray-300 hover:bg-green-100'
-                            }`}
+                        }`}
                     >
                         {selected === 'yes' && <Check className="text-white stroke-[3]" />}
                     </div>
@@ -53,8 +54,9 @@ const RatingRehirable = forwardRef<HTMLDivElement, IProps>(({ value, onChange },
                     className="flex flex-col items-center"
                 >
                     <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all ${selected === 'no' ? 'bg-red-500 border-transparent' : 'border-gray-300 hover:bg-red-100'
-                            }`}
+                        className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all ${
+                            selected === 'no' ? 'bg-red-500 border-transparent' : 'border-gray-300 hover:bg-red-100'
+                        }`}
                     >
                         {selected === 'no' && <X className="text-white stroke-[3]" />}
                     </div>

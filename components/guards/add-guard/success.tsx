@@ -15,36 +15,26 @@ export function Success({ onRate, onSkip, name }: SuccessPopupProps) {
                 <Check className="w-8 h-8 text-green-600" />
             </div>
 
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                Thanks for adding {name}!
-            </h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Thanks for adding {name}!</h2>
 
             <p className="text-gray-600 mb-8 leading-relaxed">
-                We have added your guard! However, the guard information is under review to ensure that it meets <br/> Site Guidelines.
+                We have added your guard! However, the guard information is under review to ensure that it meets <br />{' '}
+                Site Guidelines.
             </p>
 
             <div className="bg-gray-50 rounded-xl p-6 mb-8">
                 <h3 className="font-semibold text-gray-900 mb-2 text-left">Next Step</h3>
-                <p className="text-gray-600 text-left text-sm">
-                    Rate {name} to earn 2 tokens and unlock more reviews.
-                </p>
+                <p className="text-gray-600 text-left text-sm">Rate {name} to earn 2 tokens and unlock more reviews.</p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3">
-                <Button
-                    onClick={onSkip}
-                    variant="outline"
-                    className="flex-1"
-                >
+                <Button onClick={onSkip} variant="outline" className="flex-1">
                     Skip
                 </Button>
-                <Button
-                    onClick={onRate}
-                    className="flex-1"
-                >
+                <Button onClick={onRate} className="flex-1">
                     Rate & Earn 2 Tokens
                 </Button>
             </div>
         </div>
     );
-};
+}

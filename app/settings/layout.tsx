@@ -3,9 +3,9 @@ import { SettingsSidebar } from '@/components/settings/settings-sidebar';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Settings | Rate a Guard',
+    title: 'Settings | RAG',
     description:
-        'Rate a Guard helps you review, rate, and find trusted security guards based on real user feedback. Empowering safety with transparency.',
+        'RAG helps you review, rate, and find trusted security guards based on real user feedback. Empowering safety with transparency.',
 };
 
 interface SettingsLayoutProps {

@@ -8,9 +8,9 @@ import { Toaster } from '@/components/ui/toaster';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-    title: 'Rate a Guard',
+    title: 'RAG',
     description:
-        'Rate a Guard helps you review, rate, and find trusted security guards based on real user feedback. Empowering safety with transparency.',
+        'RAG helps you review, rate, and find trusted security guards based on real user feedback. Empowering safety with transparency.',
 };
 
 export default function RootLayout({

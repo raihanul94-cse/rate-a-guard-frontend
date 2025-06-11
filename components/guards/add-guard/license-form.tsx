@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { GUARD_LICENSE_TYPE, US_STATES } from '@/lib/enums';
 
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -63,16 +64,15 @@ export function LicenseForm({ handleNextStep, handleBackStep, defaultValues, isS
         <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <fieldset className="space-y-4">
-                    <legend className="text-xl font-semibold">License</legend>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <FormField
                             control={control}
                             name="licenseNumber"
                             render={({ field }) => (
                                 <FormItem className="sm:col-span-2">
-                                    <FormLabel>Number</FormLabel>
+                                    <FormLabel>License Number</FormLabel>
                                     <FormControl>
-                                        <Input {...field} />
+                                        <Input {...field} placeholder="Valid license number" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -83,7 +83,7 @@ export function LicenseForm({ handleNextStep, handleBackStep, defaultValues, isS
                             name="licenseType"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Type</FormLabel>
+                                    <FormLabel>License Type</FormLabel>
                                     <FormControl>
                                         <Select
                                             value={field.value}
@@ -94,10 +94,14 @@ export function LicenseForm({ handleNextStep, handleBackStep, defaultValues, isS
                                                 <SelectValue placeholder="Select a type" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="locksmith">Locksmith</SelectItem>
-                                                <SelectItem value="private-investigator">
-                                                    Private Investigator
-                                                </SelectItem>
+                                                {GUARD_LICENSE_TYPE.map((licenseType) => (
+                                                    <SelectItem
+                                                        key={licenseType.abbreviation}
+                                                        value={licenseType.abbreviation}
+                                                    >
+                                                        {licenseType.name}
+                                                    </SelectItem>
+                                                ))}
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
@@ -121,8 +125,11 @@ export function LicenseForm({ handleNextStep, handleBackStep, defaultValues, isS
                                                 <SelectValue placeholder="Select a state" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="NY">Ney York</SelectItem>
-                                                <SelectItem value="NJ">New Jersey</SelectItem>
+                                                {US_STATES.map((state) => (
+                                                    <SelectItem key={state.abbreviation} value={state.abbreviation}>
+                                                        {state.name}
+                                                    </SelectItem>
+                                                ))}
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
@@ -158,7 +165,7 @@ export function LicenseForm({ handleNextStep, handleBackStep, defaultValues, isS
                         />
                     </div>
                 </fieldset>
-                <div className="flex align-center space-x-2">
+                <div className="flex align-center space-x-4">
                     <Button className="w-full" variant={'outline'} onClick={handleBack}>
                         Back
                     </Button>

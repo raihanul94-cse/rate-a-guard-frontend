@@ -13,6 +13,7 @@ export interface ICompany {
     licenseNumber: string;
     licenseType: string;
     licenseExpirationDate: string;
+    status: 'active' | 'inactive' | string;
 }
 
 export interface IUserWithCompanyResponse {
@@ -21,6 +22,10 @@ export interface IUserWithCompanyResponse {
     role: 'default-user' | string;
     status: 'active' | 'inactive' | string;
     company: ICompany;
+}
+
+export interface IUserTokenResponse {
+    tokenBalance: number;
 }
 
 export interface ILicenseForm {
@@ -53,4 +58,13 @@ export interface IChangePasswordForm {
     currentPassword: string;
     newPassword: string;
     confirmPassword: string;
+}
+
+export interface IActivationStatus {
+    uuid: string;
+    status: string;
+    company: {
+        rejectionReasons: string;
+        status: string;
+    };
 }

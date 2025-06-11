@@ -10,6 +10,8 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { IAccountForm } from '@/types/user';
 import { genericClient } from '@/lib/generic-api-helper';
+import { ApiError } from '@/lib/api-error';
+import { IErrorResponse } from '@/types/response';
 
 const accountFormSchema = z.object({
     emailAddress: z.string().email({ message: 'Please enter a valid email address.' }),
@@ -52,13 +54,16 @@ export function AccountForm({ data }: IProps) {
                     emailAddress: response.data.emailAddress,
                 });
             }
-        } catch (error) {
-            console.log(error);
-            toast({
-                variant: 'destructive',
-                title: 'Error',
-                description: 'Something went wrong. Please try again.',
-            });
+        } catch (error: unknown) {
+            if (error instanceof ApiError) {
+                const details = error.details as IErrorResponse;
+
+                toast({
+                    variant: 'destructive',
+                    title: 'Error',
+                    description: details.error.message,
+                });
+            }
         } finally {
             setIsLoading(false);
         }

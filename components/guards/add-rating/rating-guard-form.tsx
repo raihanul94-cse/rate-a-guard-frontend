@@ -11,90 +11,106 @@ import { Textarea } from '@/components/ui/textarea';
 import { useParams, useRouter } from 'next/navigation';
 import { genericClient } from '@/lib/generic-api-helper';
 import { useToast } from '@/hooks/use-toast';
-import { RatingRehirable } from './rating-rehirable-toggle';
+import { RatingRehirable } from '@/components/guards/add-rating/rating-rehirable-toggle';
+import { ApiError } from '@/lib/api-error';
+import { IErrorResponse } from '@/types/response';
 
 const ratingCriteriaOptions: {
     section: string;
     field: z.infer<typeof formSchema> extends infer T ? keyof T : never;
     options: RatingOption[];
 }[] = [
-        {
-            section: 'How consistent was attendance and punctuality?',
-            field: 'regularityRating',
-            options: [
-                { value: 1, label: 'Frequently Late / Absent', color: 'bg-red-500' },
-                { value: 2, label: 'Often Late', color: 'bg-orange-500' },
-                { value: 3, label: 'Sometimes Late', color: 'bg-yellow-400' },
-                { value: 4, label: 'Usually On Time', color: 'bg-green-400' },
-                { value: 5, label: 'Always On Time', color: 'bg-green-700' },
-            ],
-        },
-        {
-            section: 'How professional was the individual in conduct and attitude?',
-            field: 'professionalismRating',
-            options: [
-                { value: 1, label: 'Unprofessional Behavior', color: 'bg-red-500' },
-                { value: 2, label: 'Needs Improvement', color: 'bg-orange-500' },
-                { value: 3, label: 'Adequate Conduct', color: 'bg-yellow-400' },
-                { value: 4, label: 'Professional', color: 'bg-green-400' },
-                { value: 5, label: 'Highly Professional', color: 'bg-green-700' },
-            ],
-        },
-        {
-            section: 'How productive was the individual in completing tasks?',
-            field: 'productivityRating',
-            options: [
-                { value: 1, label: 'Very Unproductive', color: 'bg-red-500' },
-                { value: 2, label: 'Low Output', color: 'bg-orange-500' },
-                { value: 3, label: 'Meets Expectations', color: 'bg-yellow-400' },
-                { value: 4, label: 'Above Average', color: 'bg-green-400' },
-                { value: 5, label: 'Exceptional Output', color: 'bg-green-700' },
-            ],
-        },
-        {
-            section: 'How effective was the individual in customer service?',
-            field: 'customerServiceRating',
-            options: [
-                { value: 1, label: 'Rude / Unhelpful', color: 'bg-red-500' },
-                { value: 2, label: 'Inconsistent', color: 'bg-orange-500' },
-                { value: 3, label: 'Adequate Support', color: 'bg-yellow-400' },
-                { value: 4, label: 'Friendly & Helpful', color: 'bg-green-400' },
-                { value: 5, label: 'Outstanding Service', color: 'bg-green-700' },
-            ],
-        },
-        {
-            section: 'How clear and effective was communication?',
-            field: 'communicationRating',
-            options: [
-                { value: 1, label: 'Poor Communicator', color: 'bg-red-500' },
-                { value: 2, label: 'Often Unclear', color: 'bg-orange-500' },
-                { value: 3, label: 'Clear Sometimes', color: 'bg-yellow-400' },
-                { value: 4, label: 'Clear & Concise', color: 'bg-green-400' },
-                { value: 5, label: 'Excellent Communication', color: 'bg-green-700' },
-            ],
-        },
-    ];
+    {
+        section: 'How consistent was attendance and punctuality?',
+        field: 'regularityRating',
+        options: [
+            { value: 1, label: 'Frequently Late / Absent', color: 'bg-red-500' },
+            { value: 2, label: 'Often Late', color: 'bg-orange-500' },
+            { value: 3, label: 'Sometimes Late', color: 'bg-yellow-400' },
+            { value: 4, label: 'Usually On Time', color: 'bg-green-400' },
+            { value: 5, label: 'Always On Time', color: 'bg-green-700' },
+        ],
+    },
+    {
+        section: 'How professional was the individual in conduct and attitude?',
+        field: 'professionalismRating',
+        options: [
+            { value: 1, label: 'Unprofessional Behavior', color: 'bg-red-500' },
+            { value: 2, label: 'Needs Improvement', color: 'bg-orange-500' },
+            { value: 3, label: 'Adequate Conduct', color: 'bg-yellow-400' },
+            { value: 4, label: 'Professional', color: 'bg-green-400' },
+            { value: 5, label: 'Highly Professional', color: 'bg-green-700' },
+        ],
+    },
+    {
+        section: 'How productive was the individual in completing tasks?',
+        field: 'productivityRating',
+        options: [
+            { value: 1, label: 'Very Unproductive', color: 'bg-red-500' },
+            { value: 2, label: 'Low Output', color: 'bg-orange-500' },
+            { value: 3, label: 'Meets Expectations', color: 'bg-yellow-400' },
+            { value: 4, label: 'Above Average', color: 'bg-green-400' },
+            { value: 5, label: 'Exceptional Output', color: 'bg-green-700' },
+        ],
+    },
+    {
+        section: 'How effective was the individual in customer service?',
+        field: 'customerServiceRating',
+        options: [
+            { value: 1, label: 'Rude / Unhelpful', color: 'bg-red-500' },
+            { value: 2, label: 'Inconsistent', color: 'bg-orange-500' },
+            { value: 3, label: 'Adequate Support', color: 'bg-yellow-400' },
+            { value: 4, label: 'Friendly & Helpful', color: 'bg-green-400' },
+            { value: 5, label: 'Outstanding Service', color: 'bg-green-700' },
+        ],
+    },
+    {
+        section: 'How clear and effective was communication?',
+        field: 'communicationRating',
+        options: [
+            { value: 1, label: 'Poor Communicator', color: 'bg-red-500' },
+            { value: 2, label: 'Often Unclear', color: 'bg-orange-500' },
+            { value: 3, label: 'Clear Sometimes', color: 'bg-yellow-400' },
+            { value: 4, label: 'Clear & Concise', color: 'bg-green-400' },
+            { value: 5, label: 'Excellent Communication', color: 'bg-green-700' },
+        ],
+    },
+];
 
 const formSchema = z.object({
-    regularityRating: z.number().nullable().refine(val => val !== null && val >= 1, {
-        message: "Regularity rating is required",
-    }),
-    professionalismRating: z.number().nullable().refine(val => val !== null && val >= 1, {
-        message: "Professionalism rating is required",
-    }),
-    productivityRating: z.number().nullable().refine(val => val !== null && val >= 1, {
-        message: "Productivity rating is required",
-    }),
-    customerServiceRating: z.number().nullable().refine(val => val !== null && val >= 1, {
-        message: "Customer service rating is required",
-    }),
-    communicationRating: z.number().nullable().refine(val => val !== null && val >= 1, {
-        message: "Communication rating is required",
-    }),
+    regularityRating: z
+        .number()
+        .nullable()
+        .refine((val) => val !== null && val >= 1, {
+            message: 'Regularity rating is required',
+        }),
+    professionalismRating: z
+        .number()
+        .nullable()
+        .refine((val) => val !== null && val >= 1, {
+            message: 'Professionalism rating is required',
+        }),
+    productivityRating: z
+        .number()
+        .nullable()
+        .refine((val) => val !== null && val >= 1, {
+            message: 'Productivity rating is required',
+        }),
+    customerServiceRating: z
+        .number()
+        .nullable()
+        .refine((val) => val !== null && val >= 1, {
+            message: 'Customer service rating is required',
+        }),
+    communicationRating: z
+        .number()
+        .nullable()
+        .refine((val) => val !== null && val >= 1, {
+            message: 'Communication rating is required',
+        }),
     rehirable: z.string().nullable(),
-    review: z.string().min(1, { message: "Review is required" }),
+    review: z.string().min(1, { message: 'Review is required' }),
 });
-
 
 export function RatingGuardForm() {
     const { guardUuid } = useParams<{ guardUuid: string }>();
@@ -115,7 +131,11 @@ export function RatingGuardForm() {
         },
     });
 
-    const { control, handleSubmit, formState: { isValid } } = form;
+    const {
+        control,
+        handleSubmit,
+        formState: { isValid },
+    } = form;
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsSubmitting(true);
@@ -136,13 +156,16 @@ export function RatingGuardForm() {
 
                 router.push(`/guards/${guardUuid}/add-rating?success`);
             }
-        } catch (error) {
-            console.log(error);
-            toast({
-                variant: 'destructive',
-                title: 'Error',
-                description: 'Something went wrong. Please try again.',
-            });
+        } catch (error: unknown) {
+            if (error instanceof ApiError) {
+                const details = error.details as IErrorResponse;
+
+                toast({
+                    variant: 'destructive',
+                    title: 'Error',
+                    description: details.error.message,
+                });
+            }
         } finally {
             setIsSubmitting(false);
         }
@@ -219,13 +242,13 @@ export function RatingGuardForm() {
                     <p className="text-xs text-gray-500">
                         By clicking the “Submit Feedback button, I acknowledge that I have read and agreed to the{' '}
                         <a href="#" className="text-blue-500">
-                            Rate A Guard Site Guidelines, Terms of Use
+                            RAG Site Guidelines, Terms of Use
                         </a>{' '}
                         and{' '}
                         <a href="#" className="text-blue-500">
                             Privacy Policy
                         </a>
-                        . Submitted data becomes the property of Rate A Guard.
+                        . Submitted data becomes the property of RAG.
                     </p>
                     <div className="mt-4 flex align-center justify-center space-x-2">
                         <Button type="submit" disabled={isSubmitting || !isValid}>

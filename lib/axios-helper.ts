@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { cookies } from 'next/headers';
+import { ApiError } from './api-error';
 
 class AxiosHelper {
     private instance: AxiosInstance;
@@ -33,9 +34,12 @@ class AxiosHelper {
                 if (error.response?.status === 401) {
                     await this.clearTokens();
                 }
-                console.log(JSON.stringify(error));
-                
-                return Promise.reject(error);
+
+                const statusCode = error.response?.status ?? 500;
+                const message = error.response?.data?.message || error.message || 'Unknown error';
+                const details = error.response?.data;
+
+                return Promise.reject(new ApiError(message, statusCode, details));
             }
         );
     }
@@ -50,6 +54,7 @@ class AxiosHelper {
     private async clearTokens() {
         const cookieStore = await cookies();
         cookieStore.delete('access-token');
+        cookieStore.delete('refresh-token');
     }
 
     public getInstance(): AxiosInstance {

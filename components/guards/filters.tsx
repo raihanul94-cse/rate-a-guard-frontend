@@ -3,13 +3,12 @@
 import { Search } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { IGuardFilter } from '@/types/guard';
 
 interface IProps {
     query: string;
     setQuery: (query: string) => void;
-    filter: Partial<IGuardFilter>;
-    setFilter: (filter: Partial<IGuardFilter>) => void;
+    filter: Partial<Record<string, string>>;
+    setFilter: (filter: Partial<Record<string, string>>) => void;
 }
 
 export function Filters({ query, setQuery, filter, setFilter }: IProps) {
@@ -30,9 +29,8 @@ export function Filters({ query, setQuery, filter, setFilter }: IProps) {
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem value="all">All Types</SelectItem>
-                    <SelectItem value="Fulltime"></SelectItem>
-                    <SelectItem value="Contract">Contract</SelectItem>
-                    <SelectItem value="Intern">Intern</SelectItem>
+                    <SelectItem value="locksmith">Locksmith</SelectItem>
+                    <SelectItem value="private-investigator">Private Investigator</SelectItem>
                 </SelectContent>
             </Select>
             <Select value={filter.state} onValueChange={(value) => setFilter({ ...filter, state: value })}>
@@ -41,10 +39,8 @@ export function Filters({ query, setQuery, filter, setFilter }: IProps) {
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem value="all">All States</SelectItem>
-                    <SelectItem value="CEO">CEO</SelectItem>
-                    <SelectItem value="Project Manager">Project Manager</SelectItem>
-                    <SelectItem value="UI Designer">UI Designer</SelectItem>
-                    <SelectItem value="Developer">Developer</SelectItem>
+                    <SelectItem value="NY">New York</SelectItem>
+                    <SelectItem value="NJ">New Jersey</SelectItem>
                 </SelectContent>
             </Select>
             <Select value={filter.status} onValueChange={(value) => setFilter({ ...filter, status: value })}>

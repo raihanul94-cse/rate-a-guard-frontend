@@ -1,12 +1,13 @@
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { IGuardTable } from '@/types/guard';
-import { GuardsTableRow } from './guards-table-row';
+import { GuardsTableRow } from '@/components/guards/table/guards-table-row';
 
 interface IProps {
     guards: IGuardTable[];
+    reload(): void;
 }
 
-export function GuardsTable({ guards }: IProps) {
+export function GuardsTable({ guards, reload }: IProps) {
     return (
         <div className="rounded-lg border">
             <Table>
@@ -22,7 +23,7 @@ export function GuardsTable({ guards }: IProps) {
                 </TableHeader>
                 <TableBody>
                     {guards.map((guard) => (
-                        <GuardsTableRow key={guard.uuid} guard={guard} />
+                        <GuardsTableRow key={guard.uuid} guard={guard} reload={reload} />
                     ))}
                 </TableBody>
             </Table>

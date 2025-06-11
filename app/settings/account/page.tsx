@@ -23,7 +23,7 @@ export default async function SettingsPage() {
     if (!response) {
         return (
             <div>
-                <h3 className="text-lg font-medium">Profile</h3>
+                <h3 className="text-lg font-medium">Account</h3>
                 <p className="text-sm text-red-500">Failed to load settings. Please try again later.</p>
             </div>
         );

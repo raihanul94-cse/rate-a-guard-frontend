@@ -10,6 +10,8 @@ import { useToast } from '@/hooks/use-toast';
 import { IAgentForm } from '@/types/user';
 import { useEffect, useState } from 'react';
 import { genericClient } from '@/lib/generic-api-helper';
+import { ApiError } from '@/lib/api-error';
+import { IErrorResponse } from '@/types/response';
 
 const agentFormSchema = z.object({
     registeredAgentFirstName: z
@@ -70,13 +72,16 @@ export function AgentForm({ data }: IProps) {
                     phoneNumber: response.data.phoneNumber,
                 });
             }
-        } catch (error) {
-            console.log(error);
-            toast({
-                variant: 'destructive',
-                title: 'Error',
-                description: 'Something went wrong. Please try again.',
-            });
+        } catch (error: unknown) {
+            if (error instanceof ApiError) {
+                const details = error.details as IErrorResponse;
+
+                toast({
+                    variant: 'destructive',
+                    title: 'Error',
+                    description: details.error.message,
+                });
+            }
         } finally {
             setIsLoading(false);
         }

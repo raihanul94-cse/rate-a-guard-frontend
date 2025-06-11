@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { US_STATES } from '@/lib/enums';
 
 const zipRegex = /^\d{4,10}$/;
 
@@ -61,7 +62,6 @@ export function AddressForm({ handleNextStep, handleBackStep, defaultValues }: I
         <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <fieldset className="space-y-4">
-                    <legend className="text-xl font-semibold">Address</legend>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <FormField
                             control={control}
@@ -70,7 +70,7 @@ export function AddressForm({ handleNextStep, handleBackStep, defaultValues }: I
                                 <FormItem className="sm:col-span-2">
                                     <FormLabel>Address</FormLabel>
                                     <FormControl>
-                                        <Input {...field} />
+                                        <Input {...field} placeholder="123 Main St" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -83,7 +83,7 @@ export function AddressForm({ handleNextStep, handleBackStep, defaultValues }: I
                                 <FormItem>
                                     <FormLabel>City</FormLabel>
                                     <FormControl>
-                                        <Input {...field} />
+                                        <Input {...field} placeholder="City" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -105,23 +105,13 @@ export function AddressForm({ handleNextStep, handleBackStep, defaultValues }: I
                                                 <SelectValue placeholder="Select a state" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="NY">Ney York</SelectItem>
-                                                <SelectItem value="NJ">New Jersey</SelectItem>
+                                                {US_STATES.map((state) => (
+                                                    <SelectItem key={state.abbreviation} value={state.abbreviation}>
+                                                        {state.name}
+                                                    </SelectItem>
+                                                ))}
                                             </SelectContent>
                                         </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={control}
-                            name="zip"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Zip</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -134,7 +124,20 @@ export function AddressForm({ handleNextStep, handleBackStep, defaultValues }: I
                                 <FormItem>
                                     <FormLabel>Country</FormLabel>
                                     <FormControl>
-                                        <Input {...field} />
+                                        <Input {...field} placeholder="Country" />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={control}
+                            name="zip"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Zip Code</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} placeholder="ZIP" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -142,7 +145,7 @@ export function AddressForm({ handleNextStep, handleBackStep, defaultValues }: I
                         />
                     </div>
                 </fieldset>
-                <div className="flex align-center space-x-2">
+                <div className="flex align-center space-x-4">
                     <Button className="w-full" variant={'outline'} onClick={handleBack}>
                         Back
                     </Button>

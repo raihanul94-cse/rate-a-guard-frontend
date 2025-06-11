@@ -15,9 +15,7 @@ export function Success({ guardUuid, name }: SuccessPopupProps) {
                 <Check className="w-8 h-8 text-green-600" />
             </div>
 
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                Thanks for rating {name}!
-            </h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Thanks for rating {name}!</h2>
 
             <p className="text-gray-600 mb-8 leading-relaxed">
                 We have added your rating but it is still under review to ensure that it meets <br /> Site Guidelines.
@@ -25,13 +23,9 @@ export function Success({ guardUuid, name }: SuccessPopupProps) {
 
             <div className="flex flex-col sm:flex-row justify-center gap-3">
                 <Button asChild>
-                    <Link
-                        href={`/guards/${guardUuid}/view-ratings`}
-                    >
-                        View Ratings
-                    </Link>
+                    <Link href={`/guards/${guardUuid}/view-ratings`}>View Ratings</Link>
                 </Button>
             </div>
         </div>
     );
-};
+}

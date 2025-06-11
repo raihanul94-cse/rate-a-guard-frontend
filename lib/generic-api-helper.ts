@@ -1,3 +1,6 @@
+import axios, { AxiosError } from 'axios';
+import { ApiError } from './api-error';
+
 type TRequestPayload<T> = {
     url: string;
     method: 'get' | 'post' | 'put' | 'delete';
@@ -7,15 +10,15 @@ type TRequestPayload<T> = {
 
 export const genericClient = async <T>(payload: TRequestPayload<T>) => {
     try {
-        const response = await fetch('/api/generic', {
-            method: 'POST',
-            body: JSON.stringify(payload),
+        const response = await axios.post('/api/generic', payload, {
             headers: { 'Content-Type': 'application/json' },
         });
-
-        const result = await response.json();
-        return result;
+        return response.data;
     } catch (error) {
-        return { error: (error as Error).message };
+        const err = error as AxiosError;
+        const data = err.response?.data as { details: object; error: string };
+        const statusCode = err.response?.status ?? 500;
+        const message = data.error || err.message || 'Unknown error';
+        throw new ApiError(message, statusCode, data.details);
     }
 };

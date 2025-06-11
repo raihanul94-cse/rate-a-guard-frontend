@@ -9,10 +9,7 @@ import { Success } from '@/components/guards/add-rating/success';
 
 async function fetchGuardMetaData(guardUuid: string): Promise<IGuardMeta | null> {
     try {
-        const resp = await axiosHelper.get<ISuccessResponse<IGuardMeta>>(
-            `/api/guards/${guardUuid}/meta`
-        );
-
+        const resp = await axiosHelper.get<ISuccessResponse<IGuardMeta>>(`/api/guards/${guardUuid}/meta`);
 
         if (resp.data && resp.status === 'success') {
             return resp.data;
@@ -24,11 +21,7 @@ async function fetchGuardMetaData(guardUuid: string): Promise<IGuardMeta | null>
     return null;
 }
 
-export async function generateMetadata({
-    params,
-}: {
-    params: Promise<{ guardUuid: string }>;
-}): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ guardUuid: string }> }): Promise<Metadata> {
     try {
         const { guardUuid } = await params;
         const guardData = await fetchGuardMetaData(guardUuid);
@@ -54,7 +47,7 @@ export default async function ReviewPage({
     searchParams,
 }: {
     params: Promise<{ guardUuid: string }>;
-    searchParams: Promise<{ success?: string }>
+    searchParams: Promise<{ success?: string }>;
 }) {
     const { success } = await searchParams;
 
@@ -65,18 +58,20 @@ export default async function ReviewPage({
         <div className="relative flex min-h-screen flex-col">
             <HomeNavbar />
             <main className="flex-1">
-                {
-                    success !== undefined ?
-                        <Success name={`${guardData?.guard.firstName} ${guardData?.guard.lastName}`} guardUuid={guardData?.guard.uuid || ''} /> :
-                        <>
-                            <RatingGuardHeader guardData={guardData} />
+                {success !== undefined ? (
+                    <Success
+                        name={`${guardData?.guard.firstName} ${guardData?.guard.lastName}`}
+                        guardUuid={guardData?.guard.uuid || ''}
+                    />
+                ) : (
+                    <>
+                        <RatingGuardHeader guardData={guardData} />
 
-                            <div className="container mx-auto pt-2 pb-10 max-w-[1224px]">
-                                <RatingGuardForm />
-                            </div>
-                        </>
-                }
-
+                        <div className="container mx-auto pt-2 pb-10 max-w-[1224px]">
+                            <RatingGuardForm />
+                        </div>
+                    </>
+                )}
             </main>
         </div>
     );

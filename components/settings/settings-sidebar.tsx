@@ -3,13 +3,13 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { User, Bell, Monitor, UserCog } from 'lucide-react';
+import { Building2, Bell, Monitor, UserCog } from 'lucide-react';
 
 const sidebarNavItems = [
     {
-        title: 'Profile',
+        title: 'Company Information',
         href: '/settings',
-        icon: User,
+        icon: Building2,
     },
     {
         title: 'Account',

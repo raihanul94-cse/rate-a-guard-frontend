@@ -10,6 +10,10 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { ILicenseForm } from '@/types/user';
 import { genericClient } from '@/lib/generic-api-helper';
+import { ApiError } from '@/lib/api-error';
+import { IErrorResponse } from '@/types/response';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { COMPANY_LICENSE_TYPE } from '@/lib/enums';
 
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -56,6 +60,8 @@ export function LicenseForm({ data }: IProps) {
         },
     });
 
+    const { control, handleSubmit, reset, formState } = form;
+
     async function onSubmit(values: LicenseFormValues) {
         setIsLoading(true);
 
@@ -75,20 +81,23 @@ export function LicenseForm({ data }: IProps) {
                 data.licenseNumber = response.data.licenseNumber;
                 data.licenseType = response.data.licenseType;
                 data.licenseExpirationDate = response.data.licenseExpirationDate;
-                form.reset({
+                reset({
                     companyName: response.data.companyName,
                     licenseNumber: response.data.licenseNumber,
                     licenseType: response.data.licenseType,
                     licenseExpirationDate: response.data.licenseExpirationDate,
                 });
             }
-        } catch (error) {
-            console.log(error);
-            toast({
-                variant: 'destructive',
-                title: 'Error',
-                description: 'Something went wrong. Please try again.',
-            });
+        } catch (error: unknown) {
+            if (error instanceof ApiError) {
+                const details = error.details as IErrorResponse;
+
+                toast({
+                    variant: 'destructive',
+                    title: 'Error',
+                    description: details.error.message,
+                });
+            }
         } finally {
             setIsLoading(false);
         }
@@ -96,20 +105,20 @@ export function LicenseForm({ data }: IProps) {
 
     useEffect(() => {
         if (data) {
-            form.reset({
+            reset({
                 companyName: data.companyName,
                 licenseNumber: data.licenseNumber,
                 licenseType: data.licenseType,
                 licenseExpirationDate: data.licenseExpirationDate,
             });
         }
-    }, [data, form]);
+    }, [data, reset]);
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">
                 <FormField
-                    control={form.control}
+                    control={control}
                     name="companyName"
                     render={({ field }) => (
                         <FormItem>
@@ -122,7 +131,7 @@ export function LicenseForm({ data }: IProps) {
                     )}
                 />
                 <FormField
-                    control={form.control}
+                    control={control}
                     name="licenseNumber"
                     render={({ field }) => (
                         <FormItem>
@@ -135,13 +144,24 @@ export function LicenseForm({ data }: IProps) {
                     )}
                 />
                 <FormField
-                    control={form.control}
+                    control={control}
                     name="licenseType"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>License Type</FormLabel>
                             <FormControl>
-                                <Input placeholder="Company license type" {...field} />
+                                <Select value={field.value} onValueChange={field.onChange} defaultValue={field.value}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select a type" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {COMPANY_LICENSE_TYPE.map((licenseType) => (
+                                            <SelectItem key={licenseType.abbreviation} value={licenseType.abbreviation}>
+                                                {licenseType.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -149,11 +169,11 @@ export function LicenseForm({ data }: IProps) {
                 />
 
                 <FormField
-                    control={form.control}
+                    control={control}
                     name="licenseExpirationDate"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>License Type</FormLabel>
+                            <FormLabel>License Expiration</FormLabel>
                             <FormControl>
                                 <Input type="date" {...field} />
                             </FormControl>
@@ -161,7 +181,7 @@ export function LicenseForm({ data }: IProps) {
                         </FormItem>
                     )}
                 />
-                {form.formState.isDirty && (
+                {formState.isDirty && (
                     <Button type="submit" disabled={isLoading}>
                         {isLoading ? 'Saving Changes...' : 'Save Changes'}
                     </Button>

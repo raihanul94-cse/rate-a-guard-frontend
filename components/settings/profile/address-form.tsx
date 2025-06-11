@@ -10,6 +10,10 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { IAddressForm } from '@/types/user';
 import { genericClient } from '@/lib/generic-api-helper';
+import { ApiError } from '@/lib/api-error';
+import { IErrorResponse } from '@/types/response';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { US_STATES } from '@/lib/enums';
 
 const addressFormSchema = z.object({
     address: z
@@ -74,13 +78,16 @@ export function AddressForm({ data }: IProps) {
                     zip: response.data.zip,
                 });
             }
-        } catch (error) {
-            console.log(error);
-            toast({
-                variant: 'destructive',
-                title: 'Error',
-                description: 'Something went wrong. Please try again.',
-            });
+        } catch (error: unknown) {
+            if (error instanceof ApiError) {
+                const details = error.details as IErrorResponse;
+
+                toast({
+                    variant: 'destructive',
+                    title: 'Error',
+                    description: details.error.message,
+                });
+            }
         } finally {
             setIsLoading(false);
         }
@@ -134,7 +141,18 @@ export function AddressForm({ data }: IProps) {
                         <FormItem>
                             <FormLabel>State</FormLabel>
                             <FormControl>
-                                <Input placeholder="State" {...field} />
+                                <Select value={field.value} onValueChange={field.onChange} defaultValue={field.value}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select a state" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {US_STATES.map((state) => (
+                                            <SelectItem key={state.abbreviation} value={state.abbreviation}>
+                                                {state.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                             </FormControl>
                             <FormMessage />
                         </FormItem>

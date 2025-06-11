@@ -1,53 +1,84 @@
-import { useState } from 'react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from '@/components/ui/dialog';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
 import { TableCell, TableRow } from '@/components/ui/table';
-import { MoreVertical, Plus, Trash2 } from 'lucide-react';
-import { IGuardLicense, IGuardTable } from '@/types/guard';
+import { MoreVertical, Trash2 } from 'lucide-react';
+import { IGuardTable } from '@/types/guard';
+import { useToast } from '@/hooks/use-toast';
+import { genericClient } from '@/lib/generic-api-helper';
+import { AddLicenseDialog } from '@/components/guards/license/add-license-dialog';
+import { useConfirmDialog } from '@/hooks/use-confirm-dialog';
+import { GuardDetailsSheet } from '@/components/guards/view-details/guard-details-sheet';
+import { useBoolean } from '@/hooks/use-boolean';
+import { formatDate } from '@/lib/utils';
+import { GuardEditSheet } from '@/components/guards/edit-guard/edit-guard-sheet';
 
 interface IProps {
     guard: IGuardTable;
+    reload(): void;
 }
 
-export function GuardsTableRow({ guard }: IProps) {
-    const [isAddingLicense, setIsAddingLicense] = useState(false);
-    const [newLicense, setNewLicense] = useState<Partial<IGuardLicense>>({
-        licenseType: '',
-        licenseNumber: '',
-        licenseIssuanceState: '',
-        licenseIssuanceDate: '',
-        licenseExpirationDate: '',
-    });
+export function GuardsTableRow({ guard, reload }: IProps) {
+    const { toast } = useToast();
+    const { openDialog, Dialog } = useConfirmDialog();
+    const viewDetailsSheetStates = useBoolean();
+    const editDetailsSheetStates = useBoolean();
 
-    const handleAddLicense = (guardUuid: string) => {
-        setIsAddingLicense(false);
-        setNewLicense({
-            licenseType: '',
-            licenseNumber: '',
-            licenseIssuanceState: '',
-            licenseIssuanceDate: '',
-            licenseExpirationDate: '',
-        });
-    };
+    async function handleDeleteLicense(guardUuid: string, guardLicenseUuid: string) {
+        try {
+            const response = await genericClient({
+                url: `/api/user/guards/${guardUuid}/licenses/${guardLicenseUuid}/delete`,
+                method: 'delete',
+            });
 
-    const handleDeleteLicense = (guardUuid: string, guardLicenseUuid: string) => {};
+            if (response.status === 'success') {
+                reload();
+                toast({
+                    variant: 'default',
+                    title: 'Success',
+                    description: 'Guard license deleted successfully.',
+                });
+            }
+        } catch (error) {
+            console.log(error);
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Something went wrong. Please try again.',
+            });
+        }
+    }
+
+    async function handleDeleteGuard(guardUuid: string) {
+        try {
+            const response = await genericClient({
+                url: `/api/user/guards/${guardUuid}/delete`,
+                method: 'delete',
+            });
+
+            if (response.status === 'success') {
+                reload();
+                toast({
+                    variant: 'default',
+                    title: 'Success',
+                    description: 'Guard deleted successfully.',
+                });
+            }
+        } catch (error) {
+            console.log(error);
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Something went wrong. Please try again.',
+            });
+        }
+    }
     return (
         <TableRow>
             <TableCell>
@@ -62,9 +93,7 @@ export function GuardsTableRow({ guard }: IProps) {
                         <div className="font-medium">
                             {guard.firstName} {guard.lastName}
                         </div>
-                        <div className="text-sm text-muted-foreground">
-                            Joined {new Date(guard.joiningDate).toLocaleDateString()}
-                        </div>
+                        <div className="text-sm text-muted-foreground">Joined {formatDate(guard.joiningDate)}</div>
                     </div>
                 </div>
             </TableCell>
@@ -94,86 +123,21 @@ export function GuardsTableRow({ guard }: IProps) {
                                 variant="ghost"
                                 size="icon"
                                 className="h-6 w-6"
-                                onClick={() => handleDeleteLicense(guard.uuid, license.uuid)}
+                                onClick={() =>
+                                    openDialog(() => handleDeleteLicense(guard.uuid, license.uuid), {
+                                        title: 'Are you absolutely sure?',
+                                        description: 'This will permanently delete the license.',
+                                        confirmText: 'Delete',
+                                        cancelText: 'Cancel',
+                                    })
+                                }
                             >
                                 <Trash2 className="h-4 w-4 text-destructive" />
                             </Button>
                         </div>
                     ))}
 
-                    <Dialog open={isAddingLicense} onOpenChange={setIsAddingLicense}>
-                        <DialogTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                                <Plus className="mr-2 h-4 w-4" />
-                                Add License
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>Add New License</DialogTitle>
-                                <DialogDescription>Enter the details for the new license.</DialogDescription>
-                            </DialogHeader>
-                            <div className="grid gap-4 py-4">
-                                <div className="grid gap-2">
-                                    <Input
-                                        placeholder="License Type"
-                                        value={newLicense.licenseType}
-                                        onChange={(e) =>
-                                            setNewLicense({
-                                                ...newLicense,
-                                                licenseType: e.target.value,
-                                            })
-                                        }
-                                    />
-                                    <Input
-                                        placeholder="License Number"
-                                        value={newLicense.licenseNumber}
-                                        onChange={(e) =>
-                                            setNewLicense({
-                                                ...newLicense,
-                                                licenseNumber: e.target.value,
-                                            })
-                                        }
-                                    />
-                                    <Input
-                                        placeholder="Issuance State"
-                                        value={newLicense.licenseIssuanceState}
-                                        onChange={(e) =>
-                                            setNewLicense({
-                                                ...newLicense,
-                                                licenseIssuanceState: e.target.value,
-                                            })
-                                        }
-                                    />
-                                    <Input
-                                        type="date"
-                                        placeholder="Issuance Date"
-                                        value={newLicense.licenseIssuanceDate}
-                                        onChange={(e) =>
-                                            setNewLicense({
-                                                ...newLicense,
-                                                licenseIssuanceDate: e.target.value,
-                                            })
-                                        }
-                                    />
-                                    <Input
-                                        type="date"
-                                        placeholder="Expiration Date"
-                                        value={newLicense.licenseExpirationDate}
-                                        onChange={(e) =>
-                                            setNewLicense({
-                                                ...newLicense,
-                                                licenseExpirationDate: e.target.value,
-                                            })
-                                        }
-                                    />
-                                </div>
-                            </div>
-                            <DialogFooter>
-                                <Button onClick={() => handleAddLicense(guard.uuid)}>Add License</Button>
-                            </DialogFooter>
-                        </DialogContent>
-                    </Dialog>
+                    <AddLicenseDialog reload={reload} guardUuid={guard.uuid} />
                 </div>
             </TableCell>
             <TableCell>
@@ -184,12 +148,41 @@ export function GuardsTableRow({ guard }: IProps) {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem onSelect={() => {}}>View Details</DropdownMenuItem>
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => viewDetailsSheetStates.setTrue()}>
+                            View Details
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => editDetailsSheetStates.setTrue()}>Edit</DropdownMenuItem>
+                        <DropdownMenuItem
+                            className="text-destructive"
+                            onSelect={() =>
+                                openDialog(() => handleDeleteGuard(guard.uuid), {
+                                    title: 'Are you absolutely sure?',
+                                    description: 'This will permanently delete the guard.',
+                                    confirmText: 'Delete',
+                                    cancelText: 'Cancel',
+                                })
+                            }
+                        >
+                            Delete
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </TableCell>
+
+            {Dialog}
+
+            <GuardDetailsSheet
+                open={viewDetailsSheetStates.value}
+                onOpenChange={viewDetailsSheetStates.setValue}
+                guard={guard}
+            />
+
+            <GuardEditSheet
+                open={editDetailsSheetStates.value}
+                onOpenChange={editDetailsSheetStates.setValue}
+                guard={guard}
+                reload={reload}
+            />
         </TableRow>
     );
 }

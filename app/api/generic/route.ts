@@ -1,3 +1,4 @@
+import { ApiError } from '@/lib/api-error';
 import axiosHelper from '@/lib/axios-helper';
 import { NextResponse } from 'next/server';
 
@@ -22,7 +23,7 @@ const POST = async (request: Request) => {
             const response = await axiosHelper.post(url, data, {
                 params: params,
             });
-        
+
             return NextResponse.json(response);
         } else if (method === 'put') {
             const response = await axiosHelper.put(url, data, {
@@ -37,8 +38,15 @@ const POST = async (request: Request) => {
 
             return NextResponse.json(response);
         }
-    } catch (error) {
-        return NextResponse.json(error);
+    } catch (error: unknown) {
+        if (error instanceof ApiError) {
+            return NextResponse.json({ error: error.message, details: error.details }, { status: error.statusCode });
+        }
+
+        return NextResponse.json(
+            { error: 'Internal Server Error', details: (error as Error).message },
+            { status: 500 }
+        );
     }
 };
 

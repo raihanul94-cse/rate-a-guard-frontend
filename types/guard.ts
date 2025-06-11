@@ -1,4 +1,4 @@
-import { ICompany } from "./user";
+import { ICompany } from './user';
 
 export interface IGuard {
     uuid: string;
@@ -6,9 +6,6 @@ export interface IGuard {
     lastName: string;
     emailAddress: string;
     phoneNumber: string;
-    licenseNumber: string;
-    licenseType: string;
-    licenseExpirationDate: string;
     resignationDate: string | null;
     joiningDate: string;
     address: string;
@@ -26,16 +23,11 @@ export interface IGuardLicense {
     licenseIssuanceState: string;
     licenseIssuanceDate: string;
     licenseExpirationDate: string;
+    status: string;
 }
 
 export interface IGuardTable extends IGuard {
     guardLicenses: IGuardLicense[];
-}
-
-export interface IGuardFilter {
-    status: string;
-    state: string;
-    type: string;
 }
 
 export interface IGuardWithCompany extends Partial<IGuard> {
@@ -60,7 +52,7 @@ export interface IStarCounts {
     [key: string]: number;
 }
 
-export interface IGuardLatestRating {
+export interface IGuardRating {
     uuid: string;
     regularityRating: number;
     professionalismRating: number;
@@ -77,5 +69,18 @@ export interface IGuardDetails extends IGuardMeta {
     ratings: IGuardRatingStats;
     ratingCount: number;
     starCounts: IStarCounts;
-    guardLatestRating: IGuardLatestRating;
+    guardLatestRating: IGuardRating;
+    hasGuardReviewAccess: boolean;
+}
+
+export interface IGuardLicenseSearchResult {
+    guard: IGuardWithCompany;
+    otherCompanyGuards: IOtherCompanyGuard[];
+    guardLicense: IGuardLicense;
+}
+
+export interface IOtherCompanyGuard extends IGuardWithCompany {
+    averageRating: number;
+    guardRatingCount: number;
+    guardRatingRehirablePercentage: number;
 }
