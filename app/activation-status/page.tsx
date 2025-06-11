@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { ArrowRight, CheckCircle, Clock, Mail, Shield } from 'lucide-react';
 import { Metadata } from 'next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';

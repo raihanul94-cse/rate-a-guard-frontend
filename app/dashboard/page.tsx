@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import Link from 'next/link';
 import { HomeNavbar } from '@/components/home/home-navbar';
 import { Badge } from '@/components/ui/badge';

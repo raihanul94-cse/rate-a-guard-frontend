@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { AddressForm } from '@/components/settings/profile/address-form';
 import { AgentForm } from '@/components/settings/profile/agent-form';
 import { LicenseForm } from '@/components/settings/profile/license-form';

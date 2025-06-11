@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { AccountForm } from '@/components/settings/account/account-form';
 import { ChangePasswordForm } from '@/components/settings/account/change-password-form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
