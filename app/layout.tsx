@@ -1,5 +1,6 @@
 import { Inter } from 'next/font/google';
 import type { Metadata } from 'next';
+import NextTopLoader from 'nextjs-toploader';
 import './globals.css';
 import { ThemeProvider } from '@/lib/theme-provider';
 import { cn } from '@/lib/utils';
@@ -22,6 +23,7 @@ export default function RootLayout({
         <html lang="en" suppressHydrationWarning>
             <body className={cn(inter.className, 'min-h-screen bg-background antialiased')}>
                 <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+                    <NextTopLoader />
                     {children}
                     <Toaster />
                 </ThemeProvider>
