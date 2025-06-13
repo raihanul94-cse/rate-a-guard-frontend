@@ -141,7 +141,7 @@ export function AddressForm({ data }: IProps) {
                         <FormItem>
                             <FormLabel>State</FormLabel>
                             <FormControl>
-                                <Select value={field.value} onValueChange={field.onChange} defaultValue={field.value}>
+                                <Select value={field.value} onValueChange={field.onChange}>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Select a state" />
                                     </SelectTrigger>

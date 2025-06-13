@@ -3,6 +3,7 @@
 import { Search } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
+import { GUARD_LICENSE_TYPE, US_STATES } from '@/lib/enums';
 
 interface IProps {
     query: string;
@@ -29,8 +30,11 @@ export function Filters({ query, setQuery, filter, setFilter }: IProps) {
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem value="all">All Types</SelectItem>
-                    <SelectItem value="locksmith">Locksmith</SelectItem>
-                    <SelectItem value="private-investigator">Private Investigator</SelectItem>
+                    {GUARD_LICENSE_TYPE.map((state) => (
+                        <SelectItem key={state.abbreviation} value={state.abbreviation}>
+                            {state.name}
+                        </SelectItem>
+                    ))}
                 </SelectContent>
             </Select>
             <Select value={filter.state} onValueChange={(value) => setFilter({ ...filter, state: value })}>
@@ -38,9 +42,11 @@ export function Filters({ query, setQuery, filter, setFilter }: IProps) {
                     <SelectValue placeholder="State" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="all">All States</SelectItem>
-                    <SelectItem value="NY">New York</SelectItem>
-                    <SelectItem value="NJ">New Jersey</SelectItem>
+                    {US_STATES.map((state) => (
+                        <SelectItem key={state.abbreviation} value={state.abbreviation}>
+                            {state.name}
+                        </SelectItem>
+                    ))}
                 </SelectContent>
             </Select>
             <Select value={filter.status} onValueChange={(value) => setFilter({ ...filter, status: value })}>

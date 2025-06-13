@@ -19,6 +19,7 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { IGuardLicenseSearchResult, IOtherCompanyGuard } from '@/types/guard';
 import { formatDate } from '@/lib/utils';
+import { US_STATES } from '@/lib/enums';
 
 const formSchema = z.object({
     state: z.string(),
@@ -130,17 +131,16 @@ export function SearchLicense() {
                                         <FormItem>
                                             <FormLabel>State</FormLabel>
                                             <FormControl>
-                                                <Select
-                                                    value={field.value}
-                                                    onValueChange={field.onChange}
-                                                    defaultValue={field.value}
-                                                >
+                                                <Select value={field.value} onValueChange={field.onChange} defaultValue={field.value}>
                                                     <SelectTrigger>
                                                         <SelectValue placeholder="Select a state" />
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        <SelectItem value="NY">New York</SelectItem>
-                                                        <SelectItem value="NJ">New Jersey</SelectItem>
+                                                        {US_STATES.map((state) => (
+                                                            <SelectItem key={state.abbreviation} value={state.abbreviation}>
+                                                                {state.name}
+                                                            </SelectItem>
+                                                        ))}
                                                     </SelectContent>
                                                 </Select>
                                             </FormControl>

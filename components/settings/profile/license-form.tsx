@@ -150,7 +150,7 @@ export function LicenseForm({ data }: IProps) {
                         <FormItem>
                             <FormLabel>License Type</FormLabel>
                             <FormControl>
-                                <Select value={field.value} onValueChange={field.onChange} defaultValue={field.value}>
+                                <Select value={field.value} onValueChange={field.onChange}>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Select a type" />
                                     </SelectTrigger>

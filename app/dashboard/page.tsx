@@ -152,7 +152,7 @@ export default async function DashboardPage() {
                         </div>
                     </div>
 
-                    <Card className="mt-8">
+                    {/* <Card className="mt-8">
                         <CardHeader>
                             <CardTitle>Recent Activity</CardTitle>
                             <CardDescription>Your recent actions on the platform</CardDescription>
@@ -182,7 +182,7 @@ export default async function DashboardPage() {
                                 </div>
                             </div>
                         </CardContent>
-                    </Card>
+                    </Card> */}
                 </div>
             </main>
         </div>

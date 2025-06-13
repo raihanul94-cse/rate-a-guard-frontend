@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { US_STATES } from '@/lib/enums';
 
 const addressFormSchema = z.object({
     address: z
@@ -96,17 +97,16 @@ export function AddressForm({ handleNextStep, handleBackStep, defaultValues }: I
                                 <FormItem>
                                     <FormLabel>State</FormLabel>
                                     <FormControl>
-                                        <Select
-                                            value={field.value}
-                                            onValueChange={field.onChange}
-                                            defaultValue={field.value}
-                                        >
+                                        <Select value={field.value} onValueChange={field.onChange} defaultValue={field.value}>
                                             <SelectTrigger>
                                                 <SelectValue placeholder="Select a state" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="NY">New York</SelectItem>
-                                                <SelectItem value="NJ">New Jersey</SelectItem>
+                                                {US_STATES.map((state) => (
+                                                    <SelectItem key={state.abbreviation} value={state.abbreviation}>
+                                                        {state.name}
+                                                    </SelectItem>
+                                                ))}
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
