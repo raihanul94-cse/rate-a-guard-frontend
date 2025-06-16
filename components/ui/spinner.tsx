@@ -1,9 +1,27 @@
-import { Loader2 } from 'lucide-react';
+'use client';
 
-export function Spinner() {
+import * as React from 'react';
+import { Loader2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+const Spinner = React.forwardRef<
+    HTMLDivElement,
+    React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => {
     return (
-        <div className="mx-auto flex justify-center items-center min-h-[200px]">
-            <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+        <div
+            ref={ref}
+            className={cn(
+                'flex items-center justify-center',
+                className
+            )}
+            {...props}
+        >
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         </div>
     );
-}
+});
+
+Spinner.displayName = 'Spinner';
+
+export { Spinner };

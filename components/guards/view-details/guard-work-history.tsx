@@ -34,7 +34,7 @@ export function GuardWorkHistory({ guard }: { guard: IGuardTable }) {
                             </h4>
                             <p className="text-xs text-gray-600 mt-0.5">
                                 {formatDate(experience.joiningDate as string, 'yyyy')} -{' '}
-                                {formatDate(experience.resignationDate as string, 'yyyy') || '[Unavailable]'}
+                                {formatDate(experience.resignationDate as string, 'yyyy') || 'Present'}
                             </p>
                         </div>
                     </div>

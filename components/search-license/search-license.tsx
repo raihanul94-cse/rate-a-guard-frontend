@@ -235,7 +235,7 @@ export function SearchLicense() {
                                             <TableHead>Working Period</TableHead>
                                             <TableHead>Overall Rating</TableHead>
                                             <TableHead>Reviews</TableHead>
-                                            <TableHead>Re-hirable</TableHead>
+                                            <TableHead>Would Rehire</TableHead>
                                             <TableHead>Actions</TableHead>
                                         </TableRow>
                                     </TableHeader>
@@ -256,7 +256,7 @@ export function SearchLicense() {
                                                             {formatDate(
                                                                 otherCompanyGuard.resignationDate as string,
                                                                 'yyyy'
-                                                            ) || '[Unavailable]'}
+                                                            ) || 'Present'}
                                                         </p>
                                                     </TableCell>
                                                     <TableCell>
@@ -265,7 +265,7 @@ export function SearchLicense() {
                                                     <TableCell>{otherCompanyGuard.guardRatingCount} reviews</TableCell>
                                                     <TableCell>
                                                         <Badge variant="secondary">
-                                                            {otherCompanyGuard.guardRatingRehirablePercentage}
+                                                            {otherCompanyGuard.guardRatingRehirablePercentage}%
                                                         </Badge>
                                                     </TableCell>
                                                     <TableCell>

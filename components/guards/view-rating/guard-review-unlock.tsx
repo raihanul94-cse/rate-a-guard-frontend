@@ -7,7 +7,8 @@ import { ApiError } from '@/lib/api-error';
 import { genericClient } from '@/lib/generic-api-helper';
 import { IErrorResponse } from '@/types/response';
 import { Star } from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
+import { useRouter } from 'nextjs-toploader/app';
 
 export function GuardReviewUnlock() {
     const { toast } = useToast();

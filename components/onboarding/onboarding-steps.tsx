@@ -7,7 +7,7 @@ import { AddressForm } from '@/components/onboarding/address-form';
 import { AgentForm } from '@/components/onboarding/agent-form';
 import { genericClient } from '@/lib/generic-api-helper';
 import { useToast } from '@/hooks/use-toast';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'nextjs-toploader/app';
 import { ApiError } from '@/lib/api-error';
 import { IErrorResponse } from '@/types/response';
 

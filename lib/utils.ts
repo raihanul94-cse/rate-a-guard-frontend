@@ -7,8 +7,12 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatDate(date: string | Date, formatStr = 'MM/dd/yyyy'): string {
-    const parsedDate = typeof date === 'string' ? parseISO(date) : date;
-    return format(parsedDate, formatStr);
+    if (date) {
+        const parsedDate = typeof date === 'string' ? parseISO(date) : date;
+        return format(parsedDate, formatStr);
+    }
+
+    return '';
 }
 
 export function isDateBefore(date1: string | Date, date2: string | Date): boolean {

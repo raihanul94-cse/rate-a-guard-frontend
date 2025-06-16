@@ -7,7 +7,7 @@ import { AddressForm } from '@/components/guards/add-guard/address-form';
 import { LicenseForm } from '@/components/guards/add-guard/license-form';
 import { useToast } from '@/hooks/use-toast';
 import { genericClient } from '@/lib/generic-api-helper';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'nextjs-toploader/app';
 import { Success } from '@/components/guards/add-guard/success';
 import { IGuard } from '@/types/guard';
 import { ApiError } from '@/lib/api-error';

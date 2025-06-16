@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const ContactUs = () => {
@@ -40,7 +40,7 @@ const ContactUs = () => {
             <div className="text-center mb-12">
                 <h1 className="text-3xl font-bold text-gray-900 mb-4">Contact Us</h1>
                 <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                    Have questions about RateAGuard? We&apos;re here to help. Reach out to us using the form below or contact us directly.
+                    Have questions about RAG? We&apos;re here to help. Reach out to us using the form below or contact us directly.
                 </p>
             </div>
 
@@ -49,7 +49,7 @@ const ContactUs = () => {
                     <CardHeader>
                         <CardTitle>Send us a Message</CardTitle>
                         <CardDescription>
-                            Fill out the form below and we'll get back to you as soon as possible.
+                            Fill out the form below and we&apos;ll get back to you as soon as possible.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -108,7 +108,7 @@ const ContactUs = () => {
                                 />
                             </div>
 
-                            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
+                            <Button type="submit" className="w-full">
                                 <Send className="h-4 w-4 mr-2" />
                                 Send Message
                             </Button>
