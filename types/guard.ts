@@ -84,3 +84,9 @@ export interface IOtherCompanyGuard extends IGuardWithCompany {
     guardRatingCount: number;
     guardRatingRehirablePercentage: number;
 }
+
+export interface ICompanyGuardSearchResponse extends IGuardWithCompany {
+    averageRating: number;
+    guardRatingCount: number;
+    guardLicenses: IGuardLicense[];
+}

@@ -12,7 +12,7 @@ export default function LogoutPage() {
         const logout = async () => {
             removeJwtAccessToken();
             removeJwtRefreshToken();
-            router.push('/login');
+            router.push('/');
         };
 
         logout();

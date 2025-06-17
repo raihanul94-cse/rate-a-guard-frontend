@@ -12,6 +12,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { SearchGuard } from '../guards/search/search-guard';
 
 export async function HomeNavbar() {
     const cookieStore = await cookies();
@@ -35,6 +36,9 @@ export async function HomeNavbar() {
 
                 <div className="flex items-center gap-4">
                     <div className="hidden md:flex items-center space-x-6">
+                        {isAuthenticated &&
+                            <SearchGuard />
+                        }
                         {isAuthenticated && (
                             <Link href="/search-license" className="text-sm font-medium">
                                 Search License

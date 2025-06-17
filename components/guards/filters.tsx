@@ -42,6 +42,7 @@ export function Filters({ query, setQuery, filter, setFilter }: IProps) {
                     <SelectValue placeholder="State" />
                 </SelectTrigger>
                 <SelectContent>
+                    <SelectItem value="all">All States</SelectItem>
                     {US_STATES.map((state) => (
                         <SelectItem key={state.abbreviation} value={state.abbreviation}>
                             {state.name}

@@ -45,7 +45,7 @@ export function SearchLicense() {
 
         try {
             const response = await genericClient({
-                url: `/api/search/guards/`,
+                url: `/api/lookup/guards/`,
                 method: 'get',
                 params: { ...values },
             });
@@ -235,7 +235,7 @@ export function SearchLicense() {
                                             <TableHead>Working Period</TableHead>
                                             <TableHead>Overall Rating</TableHead>
                                             <TableHead>Reviews</TableHead>
-                                            <TableHead>Would Rehire</TableHead>
+                                            <TableHead>Would Hire Again</TableHead>
                                             <TableHead>Actions</TableHead>
                                         </TableRow>
                                     </TableHeader>
