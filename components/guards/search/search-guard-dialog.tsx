@@ -164,13 +164,16 @@ export function SearchGuardDialog({ open, onClose }: {
                                             </div>
                                         ) : (
                                             companies.map((company) => (
-                                                <div
-                                                    key={company.uuid}
-                                                    className="p-3 hover:bg-accent cursor-pointer border-b border-border last:border-b-0"
-                                                    onClick={() => handleCompanySelect(company)}
-                                                >
-                                                    <div className="font-medium text-sm text-foreground">{company.companyName}</div>
-                                                    <div className="text-xs text-muted-foreground">{company.city}, {company.state}</div>
+                                                <div key={company.uuid} className="p-3 flex items-center gap-4 hover:bg-accent  cursor-pointer border-b border-border last:border-b-0 justify-between" onClick={() => handleCompanySelect(company)}>
+                                                    <div>
+                                                        <div className="font-medium text-sm text-foreground">{company.companyName}</div>
+                                                        <div className="text-xs text-muted-foreground">{company.city}, {company.state}</div>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <Button variant="outline" size="sm" className="text-xs px-3 py-1 h-8">
+                                                            Select Company
+                                                        </Button>
+                                                    </div>
                                                 </div>
                                             ))
                                         )}
