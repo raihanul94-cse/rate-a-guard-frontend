@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Building2, Bell, Monitor, UserCog } from 'lucide-react';
+import { Building2, Monitor, UserCog } from 'lucide-react';
 
 const sidebarNavItems = [
     {
@@ -20,12 +20,7 @@ const sidebarNavItems = [
         title: 'Appearance',
         href: '/settings/appearance',
         icon: Monitor,
-    },
-    {
-        title: 'Notifications',
-        href: '/settings/notifications',
-        icon: Bell,
-    },
+    }
 ];
 
 export function SettingsSidebar() {

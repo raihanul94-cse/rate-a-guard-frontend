@@ -77,6 +77,7 @@ export interface IGuardLicenseSearchResult {
     guard: IGuardWithCompany;
     otherCompanyGuards: IOtherCompanyGuard[];
     guardLicense: IGuardLicense;
+    overallAverageRating: number;
 }
 
 export interface IOtherCompanyGuard extends IGuardWithCompany {

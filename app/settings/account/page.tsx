@@ -14,7 +14,7 @@ async function getSettingsData() {
             return response.data;
         }
     } catch (error) {
-        console.error('Failed to fetch settings data:', error);
+        console.log('Failed to fetch settings data:', error);
     }
     return null;
 }

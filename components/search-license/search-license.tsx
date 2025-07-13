@@ -209,7 +209,7 @@ export function SearchLicense() {
                                 </div>
                                 <div>
                                     <p className="text-sm font-medium text-gray-500">Overall Rating (All Companies)</p>
-                                    {renderStars(1)}
+                                    {renderStars(searchResult.overallAverageRating)}
                                 </div>
                             </div>
                         </CardContent>

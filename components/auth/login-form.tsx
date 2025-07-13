@@ -14,10 +14,12 @@ import { genericClient } from '@/lib/generic-api-helper';
 import Link from 'next/link';
 import { ApiError } from '@/lib/api-error';
 import { IErrorResponse } from '@/types/response';
+import { Captcha } from '@/components/security/Captcha';
 
 const formSchema = z.object({
     emailAddress: z.string().email('Please enter a valid email address'),
     password: z.string().min(8, 'Password must be at least 8 characters'),
+    token: z.string().min(8, 'Complete the captcha'),
 });
 
 export function LoginForm() {
@@ -30,6 +32,7 @@ export function LoginForm() {
         defaultValues: {
             emailAddress: '',
             password: '',
+            token: ''
         },
     });
 
@@ -114,6 +117,9 @@ export function LoginForm() {
                             <Link href="/forgot-password" className="text-xs font-medium">
                                 Forgot password?
                             </Link>
+                        </div>
+                        <div className="flex items-center justify-start pt-4">
+                            <Captcha onVerify={(token: string) => { form.setValue('token', token) }} />
                         </div>
                         <Button className="w-full" type="submit" disabled={isSubmitting}>
                             {isSubmitting ? 'Logging in...' : 'Login in with Email'}

@@ -6,7 +6,14 @@ import { IActivationStatus } from './types/user';
 import { ApiError } from './lib/api-error';
 
 export const config = {
-    matcher: ['/dashboard', '/settings/:path*', '/guards/:path*', '/search-license', '/search-results'],
+    matcher: [
+        '/dashboard',
+        '/settings/:path*',
+        '/guards/:path*',
+        '/search-license',
+        '/search-results',
+        '/activation-status',
+    ],
 };
 
 export async function middleware(req: NextRequest) {

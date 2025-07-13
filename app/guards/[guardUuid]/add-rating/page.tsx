@@ -15,7 +15,7 @@ async function fetchGuardMetaData(guardUuid: string): Promise<IGuardMeta | null>
             return resp.data;
         }
     } catch (error) {
-        console.error('Failed to fetch guard data:', error);
+        console.log('Failed to fetch guard data:', error);
     }
 
     return null;
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ guardUuid
             };
         }
     } catch (err) {
-        console.error('generateMetadata error:', err);
+        console.log('generateMetadata error:', err);
     }
 
     return {

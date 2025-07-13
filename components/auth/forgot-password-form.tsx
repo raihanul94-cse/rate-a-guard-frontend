@@ -41,6 +41,7 @@ export function ForgotPasswordForm() {
 
             if (response.status === 'success') {
                 setIsSuccess(true);
+                form.reset();
             }
         } catch (error: unknown) {
             if (error instanceof ApiError) {
@@ -60,7 +61,9 @@ export function ForgotPasswordForm() {
     return (
         <>
             <div className="flex flex-col space-y-2 text-center">
-                <h1 className="text-2xl font-semibold tracking-tight">Reset Your Password</h1>
+                <h1 className="text-2xl font-semibold tracking-tight">
+                    {isSuccess ? 'Password Reset Successfully' : 'Reset Your Password'}
+                </h1>
                 <p className="text-sm text-muted-foreground">
                     {isSuccess ? 'Check your email for reset instructions' : "We'll email you a reset link"}
                 </p>

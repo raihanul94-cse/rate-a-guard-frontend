@@ -12,9 +12,11 @@ import { genericClient } from '@/lib/generic-api-helper';
 import Link from 'next/link';
 import { ApiError } from '@/lib/api-error';
 import { IErrorResponse } from '@/types/response';
+import { Captcha } from '@/components/security/Captcha';
 
 const formSchema = z.object({
     emailAddress: z.string().email('Please enter a valid email address'),
+    token: z.string().min(8, 'Complete the captcha'),
 });
 
 export function RegisterForm() {
@@ -26,6 +28,7 @@ export function RegisterForm() {
         resolver: zodResolver(formSchema),
         defaultValues: {
             emailAddress: '',
+            token: ''
         },
     });
 
@@ -62,7 +65,13 @@ export function RegisterForm() {
     return (
         <>
             <div className="flex flex-col space-y-2 text-center">
-                <h1 className="text-2xl font-semibold tracking-tight">Create an account</h1>
+                <h1 className="text-2xl font-semibold tracking-tight">
+                    {
+                        isSuccess ?
+                            'Your account created successfully' :
+                            'Create an account'
+                    }
+                </h1>
                 <p className="text-sm text-muted-foreground">
                     {isSuccess
                         ? 'Check your email for verification instructions'
@@ -100,6 +109,9 @@ export function RegisterForm() {
                                         </FormItem>
                                     )}
                                 />
+                                <div className="flex items-center justify-start pt-4">
+                                    <Captcha onVerify={(token: string) => { form.setValue('token', token) }} />
+                                </div>
                                 <Button className="w-full" type="submit" disabled={isSubmitting}>
                                     {isSubmitting ? 'Registering...' : 'Register with Email'}
                                 </Button>
